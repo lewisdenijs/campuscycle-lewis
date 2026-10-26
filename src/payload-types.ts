@@ -344,6 +344,12 @@ export interface Clinic {
    * If your course gave you a personal code for warm-up 4, put it in this summary.
    */
   summary: string;
+  whatToBring?:
+    | {
+        item: string;
+        id?: string | null;
+      }[]
+    | null;
   timeSlots?: {
     docs?: (number | TimeSlot)[];
     hasNextPage?: boolean;
@@ -668,6 +674,12 @@ export interface ClinicsSelect<T extends boolean = true> {
   startTime?: T;
   endTime?: T;
   summary?: T;
+  whatToBring?:
+    | T
+    | {
+        item?: T;
+        id?: T;
+      };
   timeSlots?: T;
   updatedAt?: T;
   createdAt?: T;
