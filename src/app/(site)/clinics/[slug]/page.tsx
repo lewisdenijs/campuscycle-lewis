@@ -124,7 +124,6 @@ export default async function ClinicPage({ params }: Props) {
             <h2 id="about" className="text-2xl">About the clinic</h2>
             <p className="max-w-(--container-reading)">{clinic.summary}</p>
             {/* W5: show the clinic's "What to bring" list here, the same way this page shows its prices below. */}
-          </section>
 {clinic.whatToBring && clinic.whatToBring.length > 0 && (
   <>
     <h3 className="text-xl">What to bring</h3>
@@ -135,6 +134,7 @@ export default async function ClinicPage({ params }: Props) {
     </ul>
   </>
 )}
+</section>
           {repairs.length > 0 && (
             <section aria-labelledby="prices" className="grid gap-3">
               <h2 id="prices" className="text-2xl">Prices</h2>
