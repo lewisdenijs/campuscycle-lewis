@@ -16,7 +16,7 @@ export const Clinics: CollectionConfig = {
       preventDependentDeletion(
         'timeSlots',
         'clinic',
-        'This clinic still has time slots. Open Time Slots and move each one to another clinic or delete it (move or delete a slot\'s bookings first). Then delete the clinic.',
+        "This clinic still has time slots. Open Time Slots and move each one to another clinic or delete it (move or delete a slot's bookings first). Then delete the clinic.",
       ),
     ],
   },
@@ -42,15 +42,16 @@ export const Clinics: CollectionConfig = {
       type: 'textarea',
       required: true,
       admin: {
-        description: 'If your course gave you a personal code for warm-up 4, put it in this summary.',
+        description:
+          'If your course gave you a personal code for warm-up 4, put it in this summary.',
       },
     },
     // Add new clinic fields here, above the time slots list, so they also show above it in /admin.
-{
-  name: 'whatToBring',
-  type: 'array',
-  fields: [{ name: 'item', type: 'text', required: true }],
-},
+    {
+      name: 'whatToBring',
+      type: 'array',
+      fields: [{ name: 'item', type: 'text', required: true }],
+    },
     // The reverse side (a join) of the one-to-many: one clinic has many time slots. The link is stored
     // once, in each time slot's "clinic" field.
     {
