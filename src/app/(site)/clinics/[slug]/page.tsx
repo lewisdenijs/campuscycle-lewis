@@ -117,9 +117,10 @@ export default async function ClinicPage({ params }: Props) {
               </>
             )}
           </dl>
-<section>
-</section>
-aria-labelledby="about" className="grid gap-3">
+        </section>
+
+        <div className="grid content-start gap-block lg:col-start-1 lg:row-start-1">
+          <section aria-labelledby="about" className="grid gap-3">
             <h2 id="about" className="text-2xl">About the clinic</h2>
             <p className="max-w-(--container-reading)">{clinic.summary}</p>
             {clinic.whatToBring && clinic.whatToBring.length > 0 && (
