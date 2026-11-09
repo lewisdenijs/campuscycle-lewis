@@ -133,6 +133,7 @@ export default async function ClinicPage({ params }: Props) {
                 </ul>
               </>
             )}
+            
         </section>
 
           {repairs.length > 0 && (
