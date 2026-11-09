@@ -133,16 +133,6 @@ export default async function ClinicPage({ params }: Props) {
                 </ul>
               </>
             )}
-               {clinic.whatToBring && clinic.whatToBring.length > 0 && (
-     <>
-       <h3 className="text-xl">What to bring</h3>
-       <ul className="grid max-w-(--container-reading) list-disc gap-1 pl-5">
-         {clinic.whatToBring.map((row) => (
-           <li key={row.id ?? row.item}>{row.item}</li>
-         ))}
-       </ul>
-     </>
-   )}
           </section>
 
           {repairs.length > 0 && (
