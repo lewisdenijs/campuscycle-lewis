@@ -133,7 +133,7 @@ export default async function ClinicPage({ params }: Props) {
                 </ul>
               </>
             )}
-          </section>
+        </section>
 
           {repairs.length > 0 && (
             <section aria-labelledby="prices" className="grid gap-3">
