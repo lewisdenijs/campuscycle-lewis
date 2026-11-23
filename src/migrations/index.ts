@@ -5,6 +5,7 @@ import * as migration_20261004_173034_latest_end from './20261004_173034_latest_
 import * as migration_20261004_205526_booking_request_id from './20261004_205526_booking_request_id';
 import * as migration_20261004_222941_members_area from './20261004_222941_members_area';
 import * as migration_20261026_134541_what_to_bring from './20261026_134541_what_to_bring';
+import * as migration_20261123_100902_booking_repairs from './20261123_100902_booking_repairs';
 
 export const migrations = [
   {
@@ -40,6 +41,11 @@ export const migrations = [
   {
     up: migration_20261026_134541_what_to_bring.up,
     down: migration_20261026_134541_what_to_bring.down,
-    name: '20261026_134541_what_to_bring'
+    name: '20261026_134541_what_to_bring',
+  },
+  {
+    up: migration_20261123_100902_booking_repairs.up,
+    down: migration_20261123_100902_booking_repairs.down,
+    name: '20261123_100902_booking_repairs'
   },
 ];

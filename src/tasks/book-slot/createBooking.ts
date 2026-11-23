@@ -58,13 +58,13 @@ function read(formData: FormData, name: string): string {
 }
 
 /**
- * What the user filled in, to give back to the form when the booking was not saved, so nothing is
- * lost. Only these fields are read; anything else the form carries (member=1, a made-up id, ...) is
- * ignored.
+- What the user filled in, to give back to the form when the booking was not saved, so nothing is
+- lost. Only these fields are read; anything else the form carries (member=1, a made-up id, ...) is
+- ignored.
  *
- * repairs only hands the ticked repairs back to the form, so they stay ticked; nothing here is saved.
- * Before W6 the form has no repair choice, so it is always empty. What is SAVED is only what
- * payload.create below lists, which is still the whitelist.
+- repairs only hands the ticked repairs back to the form, so they stay ticked; nothing here is saved.
+- Before W6 the form has no repair choice, so it is always empty. What is SAVED is only what
+- payload.create below lists, which is still the whitelist.
  */
 function readValues(formData: FormData): BookingValues {
   return {
@@ -176,7 +176,7 @@ async function checkAndSave(formData: FormData, context: BookingContext): Promis
 
   // W6: switch on the repair choice. Remove the // in front of the next line, and of `repairs,` in
   // payload.create below. It keeps only whole numbers, the ids of the repairs the user ticked.
-  // const repairs = formData.getAll('repairs').map(Number).filter(Number.isInteger)
+  const repairs = formData.getAll('repairs').map(Number).filter(Number.isInteger)
 
   // 1. The trap field. The message says only that the booking was not saved: a program that filled
   // the trap learns nothing about why.
@@ -215,7 +215,7 @@ async function checkAndSave(formData: FormData, context: BookingContext): Promis
         requestId,
         // The logged-in member, never anything the form sends: only with the members' area on.
         member: membersAreaOn() ? context.member : undefined,
-        // repairs,
+        repairs,
       },
       overrideAccess: true,
     })
