@@ -75,35 +75,26 @@ async function sendBooking(previous: BookingResult | null, formData: FormData): 
   }
 }
 
-// W6: the repair choice, ready to switch on. Remove the // in front of every line of this function.
-// Then replace the whole line {/* W6: <RepairChoice repairs={props.repairs} /> */} in the form below
-// with <RepairChoice repairs={props.repairs} />. The server side is the two lines the W6 comment in
-// createBooking.ts names (src/tasks/book-slot/createBooking.ts).
-// function RepairChoice({ repairs }: { repairs: BookingFormProps['repairs'] }) {
-//   // The repairs ticked in the last send, so they stay ticked when the form comes back.
-//   const sent = useSentValues()
-//   return (
-//     <fieldset className="grid gap-3">
-//       <legend className="mb-1 font-semibold">
-//         Repairs <span className="font-normal text-ink-soft">(optional)</span>
-//       </legend>
-//       {repairs.map((repair) => {
-//         // To show each repair's price too, replace the line under this comment with this line:
-//         //   const label = repair.name + ', ' + formatPrice(repair.price)
-//         // and add this line at the top of the file, under the other import lines:
-//         //   import { formatPrice } from '@/lib/format'
-//         // It reads each repair's own price, from the same record as the price list: nothing is copied.
-//         const label = repair.name
-//         return (
-//           <label key={repair.id} className="flex min-h-11 items-center gap-3">
-//             <input type="checkbox" name="repairs" value={repair.id} defaultChecked={sent.repairs?.includes(String(repair.id))} className="size-5 accent-ink" />
-//             {label}
-//           </label>
-//         )
-//       })}
-//     </fieldset>
-//   )
-// }
+function RepairChoice(props: { repairs: { id: number; name: string; price: number }[] }) {
+  if (props.repairs.length === 0) return null
+  return (
+    <fieldset className="grid gap-2">
+      <legend className="font-semibold text-ink-strong">Repairs</legend>
+      <p className="text-sm text-ink-soft">Tick the repairs you want us to do.</p>
+      <div className="grid gap-2">
+        {props.repairs.map((repair) => {
+          const label = repair.name
+          return (
+            <label key={repair.id} className="flex items-center gap-3">
+              <input type="checkbox" name="repairs" value={repair.id} />
+              <span>{label}</span>
+            </label>
+          )
+        })}
+      </div>
+    </fieldset>
+  )
+}
 
 export function BookingForm(props: BookingFormProps) {
   const { clinic, slots, requestId, member } = props
@@ -186,7 +177,7 @@ export function BookingForm(props: BookingFormProps) {
           {errors.note && <FieldError id="note-error">{errors.note}</FieldError>}
         </div>
 
-        {/* W6: <RepairChoice repairs={props.repairs} /> */}
+       <RepairChoice repairs={props.repairs} />
 
         {/* The trap field: name="extra" is TRAP_FIELD in src/tasks/book-slot/guards.ts (keep the two the
             same). People never see it, a screen reader skips it (aria-hidden) and Tab never reaches it
