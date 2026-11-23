@@ -31,6 +31,7 @@ import type { Repair } from '@/payload-types'
 import type { BookingField, BookingResult, BookingValues } from '@/tasks/book-slot/createBooking'
 import { saveBooking } from '@/tasks/book-slot/saveBooking'
 import { typedValues } from '@/tasks/book-slot/typedValues'
+import { formatPrice } from '@/lib/format'
 
 type BookingFormProps = {
   // The clinic's slug: the server checks that the chosen time belongs to this clinic.
@@ -93,7 +94,7 @@ function RepairChoice({ repairs }: { repairs: BookingFormProps['repairs'] }) {
         // and add this line at the top of the file, under the other import lines:
         //   import { formatPrice } from '@/lib/format'
         // It reads each repair's own price, from the same record as the price list: nothing is copied.
-        const label = repair.name
+        const label = repair.name + ', ' + formatPrice(repair.price)
         return (
           <label key={repair.id} className="flex min-h-11 items-center gap-3">
             <input type="checkbox" name="repairs" value={repair.id} defaultChecked={sent.repairs?.includes(String(repair.id))} className="size-5 accent-ink" />
