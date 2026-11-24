@@ -82,8 +82,8 @@ export default async function HomePage() {
                 <span className="grid size-12 place-items-center rounded-control border-2 border-ink bg-coral">
                   <step.icon aria-hidden="true" className="size-6" />
                 </span>
-                <span aria-hidden="true" className="font-heading text-5xl font-bold text-ink-soft/40">
-                  {String(index + 1).padStart(2, '0')}
+                <span aria-hidden="true" className="rounded-full border-2 border-ink px-3 py-0.5 font-heading text-sm font-bold">
+                  Step {index + 1}
                 </span>
               </div>
               <h3 className="text-xl">{step.title}</h3>

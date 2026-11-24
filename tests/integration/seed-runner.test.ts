@@ -62,7 +62,7 @@ const folder = mkdtempSync(path.join(tmpdir(), 'bw-starter-seed-runner-'))
 // skipped.
 afterAll(() => rmSync(folder, { recursive: true, force: true }))
 // The example's workshops, topics and repairs only while the site has them (tests/setup/example.ts).
-const clean = ['bookings', 'timeSlots', 'clinics', ...(EXAMPLE.workshops ? ['workshops', 'topics'] : []), ...(EXAMPLE.repairs ? ['repairs'] : []), 'pages', 'media', 'users']
+const clean = ['bookings', 'timeSlots', 'clinics', ...(EXAMPLE.workshops ? ['workshops', 'topics'] : []), ...(EXAMPLE.repairs ? ['repairs'] : []), 'fixers', 'questions', 'services', 'devices', 'pages', 'media', 'users']
 const admin = { FIRST_ADMIN_EMAIL: 'seed-runner@campuscycle.example', FIRST_ADMIN_PASSWORD: 'test-password-0123456789' }
 
 describe('the seed runner (scripts/seed.mjs)', () => {
