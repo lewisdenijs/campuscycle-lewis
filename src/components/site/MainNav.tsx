@@ -45,13 +45,15 @@ export function MainNav({ account = false, loggedIn = false }: { account?: boole
         {links.map(({ href, label }) => {
           const current = currentFor(href, pathname)
           return (
-            // On a phone the logo is the way home, so the Home link only shows from sm up: the menu fits one line.
-            <li key={href} className={href === '/' ? 'hidden sm:block' : undefined}>
+            <li key={href}>
               <Link
                 href={href}
                 aria-current={current}
                 className={cn(
                   // The focus ring sits further out than elsewhere, so it clears the open page's offset frame.
+                  // On a phone the logo is the way home, so the Home link only shows from sm up: the menu
+                  // then fits one line.
+                  href === '/' && 'max-sm:hidden',
                   'flex min-h-11 items-center rounded-control px-2 text-[0.95rem] font-semibold whitespace-nowrap sm:px-3 sm:text-base text-ink no-underline focus-visible:outline-offset-6',
                   current
                     ? 'framed rounded-control font-bold [--offset-size:4px]'

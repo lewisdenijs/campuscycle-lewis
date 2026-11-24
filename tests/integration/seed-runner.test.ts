@@ -96,7 +96,7 @@ describe('the seed runner (scripts/seed.mjs)', () => {
 
     // --again adds back only what is missing: here nothing.
     const again = await runRunner({ DATABASE_URL: process.env.TEST_DATABASE_URL, ...admin }, folder, undefined, ['--again'])
-    expect(again.stdout).toMatch(EXAMPLE.workshops ? /SEED: created 0, kept 21 \(--again/ : /SEED: created 0, kept 7 \(--again/)
+    expect(again.stdout).toMatch(EXAMPLE.workshops ? /SEED: created 0, kept 21 \(--again/ : /SEED: created 0, kept 27 \(--again/)
     expect(seedVerified(again)).toBe(true)
   }, 120_000)
 
