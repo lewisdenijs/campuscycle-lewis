@@ -1,51 +1,60 @@
 # Decision: analytics
 
-Whether the site measures how it is used, and with which tool. Its reader comes later, with one
-question: can I change this, and what happens if I do? Fill in every place marked TODO. The starter's
-analytics are off until `NEXT_PUBLIC_ANALYTICS` names a tool; see `src/lib/analytics.ts`.
+Whether the site measures how it is used, and with which tool.
 
 ## The question
 
-What had to be decided, in one sentence.
-
-TODO: the question analytics should answer for your site.
+How do we learn whether users find the repairs and reach the booking, without tracking who they are?
 
 ## Options considered
 
-At least two, each with its main advantage and drawback (for example: no analytics; Vercel Web
-Analytics; Matomo, only if someone already hosts it for you).
-
-- TODO: option 1, its advantage and its drawback.
-- TODO: option 2, its advantage and its drawback.
+- **No analytics.** Advantage: nothing to set up, nothing about users leaves the site. Drawback: we
+  only see the bookings, not how many people looked at the repairs and gave up.
+- **Vercel Web Analytics.** Advantage: built into the starter and the host we already use; two
+  switches, no cookie banner needed. Drawback: on the free Hobby plan it counts page views only, keeps
+  them for one month, and records no custom events.
+- **Matomo.** Advantage: very complete, can be hosted by ourselves. Drawback: needs a server and
+  someone to run it; nobody hosts one for us.
 
 ## The decision
 
-Which option you chose. Once it is installed: what you installed, where its settings are, and how you
-checked that it does what you expected (the final rubric asks for it).
+Vercel Web Analytics, page views only.
 
-TODO: the option you chose.
+Installed with the starter's two switches: `NEXT_PUBLIC_ANALYTICS=vercel` for Production in Vercel
+(**Settings** → **Environment Variables**), and **Analytics** → **Enable** in the Vercel project.
+Checked on the live site in a browser without an ad blocker: the Network tab shows the analytics
+`script.js` and then a `view` request.
+
+TODO: the date it was switched on and checked.
 
 ## Why
 
-The reasons, each with its evidence.
-
-TODO: why you chose it.
+- The two questions we have are answered by page views: how many users open `/repairs`, and how many
+  of them open the repair café page. The bookings themselves are counted in `/admin`.
+- It costs nothing and needs no extra account: the site already runs on Vercel.
+- It sets no cookies for analytics and stores no internet address, so the site needs no cookie banner
+  (Vercel's privacy page, below).
 
 ## Consequences
 
-What you accepted with the choice, the bad with the good: what you can and cannot learn, what the free
-plan does not do, what it means for your users' privacy.
-
-TODO: the consequences.
+- Only page views: we cannot see which device was chosen in the filter or that a booking was saved as
+  events (`filter_used` and `booking_saved` need a paid plan). The address of a filtered list
+  (`/repairs?device=laptop`) does show up as a page.
+- Data is kept for one month on Hobby: the owner must read it at least monthly.
+- At most 50,000 events a month on Hobby; above that, recording pauses until the next month.
+- Users are counted by a hash of their request that is discarded after 24 hours; the privacy page
+  says so under "Counting visits".
 
 ## Facts read on
 
-The date you read each provider's pages, with their links: plans and limits change.
-
-TODO: each page you read, with its link and the date.
+- Vercel, Web Analytics limits and pricing: <https://vercel.com/docs/analytics/limits-and-pricing>,
+  read on 24 November 2026 (Hobby: 50,000 events a month, a reporting window of 1 month, no custom
+  events).
+- Vercel, Web Analytics privacy and compliance: <https://vercel.com/docs/analytics/privacy-policy>,
+  read on 24 November 2026 (no third-party cookies; users identified by a hash of the request,
+  discarded after 24 hours).
 
 ## Review when
 
-The event that should make someone look at this decision again, such as reaching a plan's limit.
-
-TODO: when to review it.
+When the site gets more than 40,000 page views a month, or when the owner wants to measure the
+booking itself as an event: then compare Vercel's Pro plan with a self-hosted tool.

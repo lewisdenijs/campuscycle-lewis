@@ -391,7 +391,7 @@ describe('the fixed wording shared with the course', () => {
   const w4 = read('src/components/site/Hero.tsx')
     .split(/\r?\n/)
     .find((line) => line.startsWith('// W4:'))
-  const w5 = read('src/app/(site)/clinics/[slug]/page.tsx')
+  const w5 = read('src/app/(site)/repair-cafe/[slug]/page.tsx')
     .split(/\r?\n/)
     .map((line) => line.trim())
     .find((line) => line.startsWith('{/* W5:'))

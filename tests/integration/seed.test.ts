@@ -17,9 +17,9 @@ refuseUnlessThrowAwayTestDatabase()
 
 
 // Children before parents: the database refuses to delete a parent that still has linked records.
-const clean = ['bookings', 'timeSlots', 'clinics', 'pages', 'media', 'users']
-// 2 images + 4 pages + the Site facts global.
-const ALL_RECORDS = 7
+const clean = ['bookings', 'timeSlots', 'clinics', 'fixers', 'questions', 'services', 'devices', 'pages', 'media', 'users']
+// 2 images + 4 devices + 8 repairs + 3 fixers + 5 questions + 4 pages + the Site facts global.
+const ALL_RECORDS = 27
 
 // The test config stores uploads in a temporary folder (tests/setup/config.ts). Empty it together with
 // the media records, so every test uploads the images afresh under their own file names.
@@ -99,13 +99,13 @@ describe('the Campus Cycle seed', () => {
     }
     expect(counts).toEqual({ pages: 4, media: 2, clinics: 0, timeSlots: 0, bookings: 0 })
     // The upload folder holds each image once: the second run uploaded nothing.
-    expect(readdirSync(uploadFolder(p)).sort()).toEqual(['clinic-tools.jpg', 'workshop-tools.jpg'])
+    expect(readdirSync(uploadFolder(p)).sort()).toEqual(['cracked-phone-screen.jpg', 'laptop-memory.jpg'])
   })
 
   it('stores the images, each with its alt text', async () => {
     const p = await getTestPayload()
     await seed(p)
-    for (const filename of ['workshop-tools.jpg', 'clinic-tools.jpg']) {
+    for (const filename of ['cracked-phone-screen.jpg', 'laptop-memory.jpg']) {
       const media = await p.find({ collection: 'media', where: { filename: { equals: filename } } })
       expect(media.docs, filename).toHaveLength(1)
       expect(media.docs[0].alt.length).toBeGreaterThan(20)
@@ -129,7 +129,7 @@ describe('the Campus Cycle seed', () => {
     const about = html((await bySlug(p, 'pages', 'about')).body)
     expect(about).toContain('<h2>Photo credits</h2>')
     // Three of the licences (CC BY-SA) require that the photographer and the licence are named.
-    for (const credit of ['Downtowngal', 'Gengiskanhg']) {
+    for (const credit of ['Sygmoral', 'Kreuzschnabel']) {
       expect(about).toContain(credit)
     }
     for (const licence of ['CC BY-SA 3.0', 'CC BY-SA 4.0']) expect(about).toContain(licence)
@@ -216,7 +216,7 @@ describe.runIf(EXAMPLE.campusCycle)('the seeded content agrees with the fact she
     const p = await getTestPayload()
     await seed(p)
     const home = await bySlug(p, 'pages', 'home')
-    // The clinic is not in the seed (the home page says "The repair clinic opens soon"), so the
+    // The clinic is not in the seed (the home page says "The repair café opens soon"), so the
     // home page's own text does not promise it.
     expect(home.intro).not.toMatch(/clinic/i)
     const contact = await bySlug(p, 'pages', 'contact')
@@ -281,12 +281,12 @@ describe('the images are found by their base name', () => {
   it('media records deleted but files kept: re-added once as name-1.jpg, then found again, never doubled', async () => {
     const p = await getTestPayload()
     await seed(p)
-    // The records go, the files stay on disk: Payload then saves a new upload as clinic-tools-1.jpg.
+    // The records go, the files stay on disk: Payload then saves a new upload as laptop-memory-1.jpg.
     await resetCollections(['media'])
     expect((await seed(p)).created).toBe(2)
     const renamed = (await p.find({ collection: 'media', limit: 10 })).docs.map((media) => media.filename)
-    expect(renamed).toContain('clinic-tools-1.jpg')
-    // The next run finds clinic-tools-1.jpg as the clinic photo, and adds nothing.
+    expect(renamed).toContain('laptop-memory-1.jpg')
+    // The next run finds laptop-memory-1.jpg as the clinic photo, and adds nothing.
     expect(await seed(p)).toEqual({ created: 0, skipped: ALL_RECORDS })
     expect(await count(p, 'media')).toBe(2)
   })
@@ -350,7 +350,7 @@ describe('runSeed: the example content is added once per database', () => {
     expect(await count(p, 'pages')).toBe(4)
     expect((await bySlug(p, 'pages', 'about')).title).toBe('About (changed by an editor)')
     expect(await exampleWasAdded(p)).toBe(true)
-    expect(logged().at(-1)).toMatch(/^SEED: created 1, kept 6 \(--again/)
+    expect(logged().at(-1)).toMatch(/^SEED: created 1, kept 26 \(--again/)
   })
 
   it('ADD_EXAMPLE_CONTENT false: no content at all, but the first editor is still created', async () => {

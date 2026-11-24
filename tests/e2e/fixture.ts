@@ -75,7 +75,7 @@ async function create(payload: Payload): Promise<Fixture> {
   return {
     clinic: { slug: clinic.slug as string, name: clinic.name },
     slots: slots.map((slot) => slot.id),
-    confirmation: `/clinics/${CLINIC_SLUG}/booked?ref=${bookingRef(booking.id)}`,
+    confirmation: `/repair-cafe/${CLINIC_SLUG}/booked?ref=${bookingRef(booking.id)}`,
   }
 }
 

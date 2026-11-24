@@ -71,9 +71,13 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
+    devices: Device;
+    services: Service;
     clinics: Clinic;
     timeSlots: TimeSlot;
     bookings: Booking;
+    fixers: Fixer;
+    questions: Question;
     throttle: Throttle;
     members: Member;
     'payload-kv': PayloadKv;
@@ -82,6 +86,9 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
+    devices: {
+      repairs: 'services';
+    };
     clinics: {
       timeSlots: 'timeSlots';
     };
@@ -93,9 +100,13 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
+    devices: DevicesSelect<false> | DevicesSelect<true>;
+    services: ServicesSelect<false> | ServicesSelect<true>;
     clinics: ClinicsSelect<false> | ClinicsSelect<true>;
     timeSlots: TimeSlotsSelect<false> | TimeSlotsSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
+    fixers: FixersSelect<false> | FixersSelect<true>;
+    questions: QuestionsSelect<false> | QuestionsSelect<true>;
     throttle: ThrottleSelect<false> | ThrottleSelect<true>;
     members: MembersSelect<false> | MembersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -242,6 +253,60 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "devices".
+ */
+export interface Device {
+  id: number;
+  name: string;
+  /**
+   * The last part of the web address, for example repair-a-puncture. Use lowercase letters, digits and hyphens.
+   */
+  slug: string;
+  /**
+   * One or two sentences for the device page: what we can and cannot fix on it.
+   */
+  description: string;
+  repairs?: {
+    docs?: (number | Service)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services".
+ */
+export interface Service {
+  id: number;
+  name: string;
+  /**
+   * The last part of the web address, for example repair-a-puncture. Use lowercase letters, digits and hyphens.
+   */
+  slug: string;
+  /**
+   * One sentence: what we do. Shown in the list of repairs.
+   */
+  summary: string;
+  /**
+   * What happens during the repair, and what the user should know first.
+   */
+  details: string;
+  /**
+   * In euros, parts included. 0 means free.
+   */
+  price: number;
+  /**
+   * About how long the repair takes, in minutes.
+   */
+  minutes: number;
+  devices: (number | Device)[];
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clinics".
  */
 export interface Clinic {
@@ -287,7 +352,7 @@ export interface TimeSlot {
   clinic: number | Clinic;
   startsAt: string;
   /**
-   * How many bicycles can be booked in this time slot. The clinic takes 2.
+   * How many devices can be booked in this time slot. The repair café takes 2.
    */
   places: number;
   label?: string | null;
@@ -312,6 +377,7 @@ export interface Booking {
   name: string;
   email: string;
   note?: string | null;
+  repairs?: (number | Service)[] | null;
   /**
    * The member who was logged in when they booked (members' area only).
    */
@@ -351,6 +417,39 @@ export interface Member {
     | null;
   password?: string | null;
   collection: 'members';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fixers".
+ */
+export interface Fixer {
+  id: number;
+  /**
+   * A first name only.
+   */
+  name: string;
+  /**
+   * One or two sentences: who they are and what they like to fix.
+   */
+  bio: string;
+  repairs?: (number | Service)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questions".
+ */
+export interface Question {
+  id: number;
+  question: string;
+  answer: string;
+  /**
+   * Lower numbers come first on the contact page.
+   */
+  order: number;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -399,6 +498,14 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
+        relationTo: 'devices';
+        value: number | Device;
+      } | null)
+    | ({
+        relationTo: 'services';
+        value: number | Service;
+      } | null)
+    | ({
         relationTo: 'clinics';
         value: number | Clinic;
       } | null)
@@ -409,6 +516,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'bookings';
         value: number | Booking;
+      } | null)
+    | ({
+        relationTo: 'fixers';
+        value: number | Fixer;
+      } | null)
+    | ({
+        relationTo: 'questions';
+        value: number | Question;
       } | null)
     | ({
         relationTo: 'throttle';
@@ -528,6 +643,33 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "devices_select".
+ */
+export interface DevicesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  description?: T;
+  repairs?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "services_select".
+ */
+export interface ServicesSelect<T extends boolean = true> {
+  name?: T;
+  slug?: T;
+  summary?: T;
+  details?: T;
+  price?: T;
+  minutes?: T;
+  devices?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clinics_select".
  */
 export interface ClinicsSelect<T extends boolean = true> {
@@ -569,8 +711,31 @@ export interface BookingsSelect<T extends boolean = true> {
   name?: T;
   email?: T;
   note?: T;
+  repairs?: T;
   member?: T;
   requestId?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "fixers_select".
+ */
+export interface FixersSelect<T extends boolean = true> {
+  name?: T;
+  bio?: T;
+  repairs?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "questions_select".
+ */
+export interface QuestionsSelect<T extends boolean = true> {
+  question?: T;
+  answer?: T;
+  order?: T;
   updatedAt?: T;
   createdAt?: T;
 }

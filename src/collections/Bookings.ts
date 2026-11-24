@@ -57,6 +57,8 @@ export const Bookings: CollectionConfig = {
       type: 'textarea',
     },
     // Add new booking fields here.
+    // What needs fixing: the repairs the user chose on the form (optional: "not sure" is fine).
+    { name: 'repairs', type: 'relationship', relationTo: 'services', hasMany: true },
 
     // The optional members' area (src/lib/membersArea.ts): the member who was logged in when they
     // booked. Only the booking form's server code fills it in, from the log-in cookie, never from what

@@ -17,7 +17,8 @@ import { cn } from '@/lib/utils'
 
 const LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/clinics', label: 'Repair clinic' },
+  { href: '/repairs', label: 'Repairs' },
+  { href: '/repair-cafe', label: 'Repair café' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
@@ -26,7 +27,7 @@ const ACCOUNT_LINK = { href: '/account', label: 'My bookings' }
 const LOGIN_LINK = { href: '/account/login', label: 'Log in' }
 
 // "page": this exact page is open. "true": a page inside this part of the site is open, for example
-// one clinic's page under Repair clinic.
+// one clinic's page under Repair café.
 function currentFor(href: string, pathname: string): 'page' | 'true' | undefined {
   if (pathname === href) return 'page'
   if (href === '/') return undefined

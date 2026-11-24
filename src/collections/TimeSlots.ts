@@ -77,7 +77,7 @@ export const TimeSlots: CollectionConfig = {
       min: 1,
       validate: positiveInteger,
       admin: {
-        description: 'How many bicycles can be booked in this time slot. The clinic takes 2.',
+        description: 'How many devices can be booked in this time slot. The repair café takes 2.',
       },
     },
     // Not stored: worked out from startsAt every time a time slot is read, for the list in /admin.

@@ -1,4 +1,4 @@
-// One clinic's page, /clinics/<slug>: example task 2, "book a clinic slot". It shows the clinic and
+// One clinic's page, /repair-cafe/<slug>: example task 2, "book a clinic slot". It shows the clinic and
 // the booking form with the time slots that have not started yet and their places left.
 // The checks and the save are in src/tasks/book-slot/ (see its README.md).
 //
@@ -7,6 +7,7 @@
 import { randomUUID } from 'node:crypto'
 import type { Metadata } from 'next'
 import { headers } from 'next/headers'
+import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import { cache } from 'react'
@@ -22,7 +23,7 @@ export const dynamic = 'force-dynamic'
 
 // The clinic's picture, from the media library (the seed uploads it). To use another one, upload it
 // in /admin and put its file name here.
-const CLINIC_IMAGE = 'clinic-tools'
+const CLINIC_IMAGE = 'laptop-memory'
 
 type Props = { params: Promise<{ slug: string }> }
 
@@ -83,6 +84,8 @@ export default async function ClinicPage({ params }: Props) {
   const picture = (await payload.find({ collection: 'media', where: { filename: { contains: CLINIC_IMAGE } }, limit: 1 })).docs[0]
   // The place, from the Site facts global (src/globals/SiteFacts.ts).
   const facts = await payload.findGlobal({ slug: 'site-facts', depth: 0 })
+  // The repairs the user can tick on the form, each with its own price from its record.
+  const repairs = (await payload.find({ collection: 'services', sort: 'name', depth: 0, limit: 100, select: { name: true, price: true } })).docs.map(({ id, name, price }) => ({ id, name, price }))
 
   // The optional members' area (src/lib/membersArea.ts): who is logged in, so the form can say that
   // this booking will be saved to their account and fill in their name and e-mail address. While the
@@ -92,10 +95,10 @@ export default async function ClinicPage({ params }: Props) {
 
   return (
     <article className="pb-6">
-      <ParentLink href="/clinics" label="Repair clinic" current={clinic.name} />
+      <ParentLink href="/repair-cafe" label="Repair café" current={clinic.name} />
       <PageTitle
         title={clinic.name}
-        intro="Choose a time, book it here, and bring your bicycle for a check or a repair."
+        intro="Choose a time, tick what needs fixing, and bring your device. A volunteer repairs it with you at the table."
         image={imageFrom(picture)}
         className="mt-3 sm:mt-4"
       />
@@ -118,8 +121,22 @@ export default async function ClinicPage({ params }: Props) {
 
         <div className="grid content-start gap-block lg:col-start-1 lg:row-start-1">
           <section aria-labelledby="about" className="grid gap-3">
-            <h2 id="about" className="text-2xl">About the clinic</h2>
+            <h2 id="about" className="text-2xl">About the repair café</h2>
             <p className="max-w-(--container-reading)">{clinic.summary}</p>
+            {clinic.whatToBring && clinic.whatToBring.length > 0 && (
+              <>
+                <h3 className="text-xl">What to bring</h3>
+                <ul className="grid max-w-(--container-reading) list-disc gap-1 pl-5">
+                  {clinic.whatToBring.map((row) => (
+                    <li key={row.id ?? row.item}>{row.item}</li>
+                  ))}
+                </ul>
+              </>
+            )}
+            <p className="max-w-(--container-reading)">
+              Not sure what is wrong? See <Link href="/repairs">the repairs and their prices</Link>, or tick nothing and
+              describe the problem in the note.
+            </p>
           </section>
 
           <section aria-labelledby="book" className="framed grid gap-5 p-5 offset-coral sm:p-8">
@@ -141,6 +158,7 @@ export default async function ClinicPage({ params }: Props) {
                 slots={slots}
                 requestId={randomUUID()}
                 member={member && { name: member.name ?? '', email: member.email }}
+                repairs={repairs}
               />
             )}
           </section>

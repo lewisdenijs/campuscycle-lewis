@@ -1,5 +1,6 @@
-// The seed: puts the Campus Cycle example content into a new site's database, so the site has real
-// pages and images to show from its very first day.
+// The seed: puts Fixpoint's content into a new site's database (the pages, the images, the devices,
+// the repairs, the volunteers and the common questions), so the site has real content from its very
+// first day.
 //
 // It adds the example content ONCE PER DATABASE. After a run that finished without an error, it notes
 // that in the database (one row in a small table of its own: src/seed/exampleFlag.ts). Every later run
@@ -17,8 +18,8 @@
 // The first editor account (from FIRST_ADMIN_EMAIL and FIRST_ADMIN_PASSWORD) is a separate step that
 // runs first, on every run: it is created only when no editor exists yet (src/seed/run.ts).
 //
-// It creates no clinic, no time slots and no bookings: a later exercise in the course asks you to add
-// the clinic yourself in /admin.
+// It creates no repair café, no time slots and no bookings: on the live site the migration
+// *_fixpoint_content.ts made them, and on a laptop you add them in /admin.
 //
 // To replace the example with your own content:
 // - before your first deploy: change the facts in src/content/campus-cycle.ts and the page texts
@@ -32,29 +33,30 @@ import { fileURLToPath } from 'node:url'
 import type { CollectionSlug, Payload, Where } from 'payload'
 import { CAMPUS_CYCLE, MADE_UP_DATA_NOTICE } from '../content/campus-cycle'
 import { PlainError } from '../lib/plainError'
+import { addOwnContent } from './ownContent'
 import { richText } from './richText'
 
-// true: a new site starts with the Campus Cycle example. Set it to false before your first deploy to
+// true: a new site starts with Fixpoint's content. Set it to false before your first deploy to
 // start from an empty site (only the first editor is created) and add your own content in /admin. After
 // your first deploy, changing it changes nothing: delete the example records in /admin instead (they
 // do not come back).
 export const ADD_EXAMPLE_CONTENT = true
 
 // The photos live next to this file, in src/seed/images (their sources and licences: SOURCES.md there).
-const IMAGES_FOLDER = fileURLToPath(new URL('./images/', import.meta.url))
+export const IMAGES_FOLDER = fileURLToPath(new URL('./images/', import.meta.url))
 
 // The alt text describes each photo for people who cannot see it (a screen reader reads it out), so it
 // says what is in the picture, not just "a photo".
-const IMAGES = [
+export const IMAGES = [
   // The home page's picture.
   {
-    filename: 'workshop-tools.jpg',
-    alt: 'A workshop wall full of bicycle tools: spanners, pliers and other tools hanging above a workbench',
+    filename: 'cracked-phone-screen.jpg',
+    alt: 'Close-up of the top of a smartphone whose glass screen is cracked in a web of lines'
   },
-  // The clinic page's picture: the clinic itself is not in the seed, but its photo is ready for it.
+  // The repair café's picture.
   {
-    filename: 'clinic-tools.jpg',
-    alt: 'Bicycle repair tools laid out on a table: an adjustable spanner, two tyre levers, Allen keys, sockets, a screwdriver and a patch kit',
+    filename: 'laptop-memory.jpg',
+    alt: 'An opened laptop seen from below the keyboard, with two green memory modules in their slots'
   },
 ] as const
 
@@ -71,43 +73,52 @@ const CC_BY_SA_4 = {
 }
 const PHOTO_CREDITS = [
   {
-    title: 'Bicycle repair tools, Bicycle Kitchen, Los Angeles.jpg',
-    page: 'https://commons.wikimedia.org/wiki/File:Bicycle_repair_tools,_Bicycle_Kitchen,_Los_Angeles.jpg',
-    photographer: 'Downtowngal',
+    title: 'Smartphone cracked screen.jpg',
+    page: 'https://commons.wikimedia.org/wiki/File:Smartphone_cracked_screen.jpg',
+    photographer: 'Sygmoral',
     ...CC_BY_SA_4,
   },
   {
-    title: 'BicycleRepairTools.JPG',
-    page: 'https://commons.wikimedia.org/wiki/File:BicycleRepairTools.JPG',
-    photographer: 'Gengiskanhg',
+    title: 'SO DIMM inserted in a Thinkpad T60.jpg',
+    page: 'https://commons.wikimedia.org/wiki/File:SO_DIMM_inserted_in_a_Thinkpad_T60.jpg',
+    photographer: 'Kreuzschnabel',
     ...CC_BY_SA_3,
   },
 ]
 
 export const PAGES = [
   {
-    title: 'Campus Cycle',
+    // The home page's big heading; its last word gets the orange marker (src/components/site/Hero.tsx).
+    title: 'Broken device? Fixed while you wait.',
     slug: 'home',
-    // No word about the clinic's times here: it is not in the seed, and until you add it the home page
-    // says "The repair clinic opens soon".
+    // No times here: the repair café's own record gives them, on the home page and on its page.
     intro:
-      'Campus Cycle is the bicycle repair service at the college. Bring your bicycle for a check or a repair.',
-    // No body: everything else on the home page comes from its own record: the clinic, and the pricing
-    // rule from the Site facts global.
+      'A broken phone or a slow laptop? Bring it to Fixpoint, the repair café at the college. Our volunteers repair it while you wait, for a small price, and show you how to keep it working.',
+    // No body: the rest of the home page comes from the records: the devices, the repair café, and
+    // the pricing rule from the Site facts global.
   },
   {
-    title: 'About Campus Cycle',
+    title: 'About Fixpoint',
     slug: 'about',
-    intro: 'Who we are, what we do and where to find us.',
+    intro: 'Who repairs your device, how a visit goes, and why we do it.',
     body: richText([
       {
         paragraph:
-          'Campus Cycle is a fictional bicycle repair service at a college. Two staff members run it.',
+          'Fixpoint is a repair café at the college, run by volunteers: students and staff who like to fix things. Fixpoint is fictional: this site is a practice project for a course.',
       },
-      { heading: 'Checks and repairs' },
-      // No times here: the clinic's own page shows them from its record, once it is open.
+      { heading: 'Why we repair' },
       {
-        paragraph: 'Bring your bicycle for a check or a repair. When the repair clinic is open, you first book a time slot on its page.',
+        paragraph:
+          'A phone with a weak battery or a laptop that gets slow is rarely broken for good. A new battery or a clean fan costs far less than a new device, and keeps one more device out of the bin.',
+      },
+      { heading: 'How a visit goes' },
+      {
+        list: [
+          ['Find the repair for your device on the ', { text: 'Repairs page', url: '/repairs' }, '.'],
+          ['Book a time slot at the ', { text: 'repair café', url: '/repair-cafe' }, ', and say what is wrong.'],
+          ['Come on Saturday with your device. A volunteer repairs it with you at the table.'],
+          ['You pay only when the repair works.'],
+        ],
       },
       { heading: 'Where to find us' },
       // A link, not the address: the Contact page shows the place from the Site facts global.
@@ -127,10 +138,11 @@ export const PAGES = [
   {
     title: 'Contact',
     slug: 'contact',
-    intro: 'Questions about the repair clinic? Send us an e-mail.',
-    // Prose only: the Contact page shows the e-mail address and the place from the Site facts global.
+    intro: 'A question about a repair or your booking? Most answers are below. Otherwise, send us an e-mail.',
+    // Prose only: the Contact page shows the e-mail address and the place from the Site facts global,
+    // and the common questions from their own records.
     body: richText([
-      { paragraph: 'There is no contact form on this site: send an e-mail instead.' },
+      { paragraph: 'There is no contact form on this site: send an e-mail instead. We answer within two working days.' },
       {
         paragraph:
           'This site is a practice project, so the e-mail address above is not a real one: it ends in .example, a name set aside for examples, and nothing sent to it arrives anywhere.',
@@ -147,7 +159,7 @@ export const PAGES = [
       { heading: 'What the booking form saves' },
       {
         paragraph:
-          'When you book a time slot, the site saves your name, your e-mail address, the time slot you chose and your note, if you wrote one. It saves them to hold your place.',
+          'When you book a time slot, the site saves your name, your e-mail address, the time slot you chose, the repairs you ticked and your note, if you wrote one. It saves them to hold your place and to have the right parts ready.',
       },
       { heading: 'Who can see it' },
       {
@@ -160,6 +172,16 @@ export const PAGES = [
       {
         paragraph:
           'When you send a form, the site keeps a scrambled code made from your internet (IP) address, for one hour, to stop anyone who sends forms too often. The address itself is not stored.',
+      },
+      { heading: 'Counting visits' },
+      {
+        paragraph:
+          'The site counts which pages are visited with Vercel Web Analytics. It sets no cookies and stores no internet address: it only counts pages, the country and the kind of device, so we cannot tell who you are.',
+      },
+      { heading: 'The map' },
+      {
+        paragraph:
+          'The Contact page shows a map from OpenStreetMap (openstreetmap.org). When the map loads, OpenStreetMap receives your internet address, as every website you load does.',
       },
       { heading: 'Cookies' },
       {
@@ -180,7 +202,7 @@ export const NO_BLOB_STORE_MESSAGE =
 export type SeedResult = { created: number; skipped: number }
 
 // Is `stored` the file `wanted`, perhaps under a number Payload added? When a file with the same name
-// is already in the upload folder, Payload saves the new one as clinic-tools-1.jpg (then -2, …),
+// is already in the upload folder, Payload saves the new one as laptop-memory-1.jpg (then -2, …),
 // and that is still the clinic photo.
 function sameImage(stored: string | null | undefined, wanted: string): boolean {
   if (!stored) return false
@@ -190,7 +212,7 @@ function sameImage(stored: string | null | undefined, wanted: string): boolean {
 }
 
 /**
- * Adds the Campus Cycle example content that is missing, and leaves everything that exists alone.
+ * Adds Fixpoint's content that is missing, and leaves everything that exists alone.
  * Returns how many records it created and how many it found already there.
  *
  * `env` is where it looks for VERCEL and BLOB_READ_WRITE_TOKEN (normally process.env; a test can pass
@@ -266,14 +288,20 @@ export async function seed(
     imageIds.set(image.filename, id)
   }
 
-  // 3. The pages.
+  // 3. Fixpoint's own content: the devices, the repairs, the volunteers and the common questions
+  // (src/seed/ownContent.ts, which the live site's migration uses too).
+  const own = await addOwnContent(payload)
+  result.created += own.created
+  result.skipped += own.skipped
+
+  // 4. The pages.
   for (const page of PAGES) {
     await keepOrCreate(await findOne('pages', { slug: { equals: page.slug } }), () =>
       payload.create({ collection: 'pages', data: page, overrideAccess: true }),
     )
   }
 
-  // 4. The Site facts: the facts several pages show, kept in one place. A global always "exists" (it
+  // 5. The Site facts: the facts several pages show, kept in one place. A global always "exists" (it
   // reads as empty until it is first saved), so an empty pricing rule means it was never filled in.
   const facts = await payload.findGlobal({ slug: 'site-facts', depth: 0, overrideAccess: true })
   if (facts.pricingRule) {

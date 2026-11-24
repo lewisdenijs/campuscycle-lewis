@@ -2,12 +2,12 @@
 // menu straight to the page), the site's name, which always leads home, and the main menu (MainNav).
 // It does not stick to the top while scrolling, so it never covers what the user is reading.
 //
-// What to change for your own site: the little bicycle mark (any lucide-react icon:
+// What to change for your own site: the little wrench mark (any lucide-react icon:
 // https://lucide.dev/icons). The site's name is SITE_NAME in src/content/campus-cycle.ts; the menu's
 // links are in MainNav.tsx.
 import { headers } from 'next/headers'
 import Link from 'next/link'
-import { Bike } from 'lucide-react'
+import { Wrench } from 'lucide-react'
 import { getPayload } from 'payload'
 import { signOut } from '@/app/(site)/account/actions'
 import { Button } from '@/components/ui/button'
@@ -45,14 +45,14 @@ export async function Header() {
       >
         Skip to main content
       </a>
-      <header className="border-b border-line">
+      <header className="border-b-2 border-ink bg-canvas">
         <div className="mx-auto flex max-w-page flex-wrap items-center justify-between gap-x-8 gap-y-3 px-gutter py-4">
           <Link
             href="/"
-            className="flex min-h-11 items-center gap-3 font-heading text-xl font-black text-ink no-underline"
+            className="flex min-h-11 items-center gap-3 font-heading text-2xl font-bold tracking-tight text-ink no-underline"
           >
-            <span className="framed grid size-10 place-items-center rounded-control bg-yellow-tint [--offset-size:3px]">
-              <Bike aria-hidden="true" className="size-6" strokeWidth={2.25} />
+            <span className="framed grid size-10 place-items-center rounded-control bg-coral offset-ink [--offset-size:3px]">
+              <Wrench aria-hidden="true" className="size-6" strokeWidth={2.25} />
             </span>
             {SITE_NAME}
           </Link>

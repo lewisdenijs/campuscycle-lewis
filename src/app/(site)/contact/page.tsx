@@ -20,6 +20,8 @@ export default async function ContactPage() {
   if (!page) notFound()
   const payload = await getPayload({ config })
   const facts = await payload.findGlobal({ slug: 'site-facts', depth: 0 })
+  // The common questions, from their own collection (src/collections/Questions.ts), in their order.
+  const questions = (await payload.find({ collection: 'questions', sort: 'order', depth: 0, limit: 50 })).docs
 
   return (
     <PlainPage page={page}>
@@ -37,6 +39,31 @@ export default async function ContactPage() {
           <dt className="mt-3 font-bold whitespace-nowrap sm:mt-0">Place</dt>
           <dd className="min-w-0 [overflow-wrap:anywhere]">{facts.place}</dd>
         </dl>
+      )}
+
+      {/* The map: OpenStreetMap's own embed (openstreetmap.org, Share, then HTML). The title says what
+          the frame shows; the link below opens the same map for people who cannot use the frame. The
+          privacy page says that OpenStreetMap receives each user's internet address when it loads. */}
+      <iframe
+        title="Map: where to find Fixpoint"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=3.7150%2C51.0515%2C3.7275%2C51.0570&layer=mapnik&marker=51.0543%2C3.7212"
+        loading="lazy"
+        className="mt-block h-80 w-full max-w-(--container-reading) rounded-frame border border-line"
+      />
+      <p>
+        <a href="https://www.openstreetmap.org/?mlat=51.0543&mlon=3.7212#map=17/51.0543/3.7212">Open the map on its own page</a>
+      </p>
+
+      {questions.length > 0 && (
+        <section aria-labelledby="questions" className="mt-block grid max-w-(--container-reading) gap-4">
+          <h2 id="questions" className="text-2xl">Common questions</h2>
+          {questions.map((item) => (
+            <div key={item.id} className="grid gap-1">
+              <h3 className="text-xl">{item.question}</h3>
+              <p>{item.answer}</p>
+            </div>
+          ))}
+        </section>
       )}
     </PlainPage>
   )

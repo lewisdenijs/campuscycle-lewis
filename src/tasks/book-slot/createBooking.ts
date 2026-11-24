@@ -197,6 +197,16 @@ async function checkAndSave(formData: FormData, context: BookingContext): Promis
     return { ok: false, message: TOO_MANY_MESSAGE, values }
   }
 
+  // The repairs the user ticked (what needs fixing): only ids of repairs that exist. Anything else in
+  // the form, such as an id that was deleted meanwhile, is dropped, so it can never stop the booking.
+  const ticked = (values.repairs ?? []).map(Number)
+  const repairs =
+    ticked.length === 0
+      ? []
+      : (
+          await payload.find({ collection: 'services', where: { id: { in: ticked } }, depth: 0, limit: 100, select: {}, overrideAccess: true })
+        ).docs.map((repair) => repair.id)
+
   // 5. The save. overrideAccess: true, because nobody may create bookings through the API (see
   // src/collections/Bookings.ts): only this code, after the checks above. The places rule
   // (capacity.ts) still runs during the save.
@@ -208,6 +218,8 @@ async function checkAndSave(formData: FormData, context: BookingContext): Promis
         name: values.name,
         email: values.email,
         note: values.note || undefined,
+        // The repairs the user ticked, only those that really exist (a made-up id is ignored).
+        repairs,
         requestId,
         // The logged-in member, never anything the form sends: only with the members' area on.
         member: membersAreaOn() ? context.member : undefined,

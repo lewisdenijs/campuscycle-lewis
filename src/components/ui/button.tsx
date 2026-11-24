@@ -11,11 +11,11 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        // Navy with a small solid offset, the course's "framed" look; it presses in when clicked.
+        // Signal orange with ink text and a solid ink offset (Fixpoint's look); it presses in when clicked.
         primary:
-          'border-2 border-ink bg-ink text-canvas shadow-[3px_3px_0_0_var(--color-brand)] hover:bg-link hover:border-link active:translate-x-[2px] active:translate-y-[2px] active:shadow-none',
+          'border-2 border-ink bg-coral text-ink shadow-[4px_4px_0_0_var(--color-ink)] hover:bg-yellow active:translate-x-[3px] active:translate-y-[3px] active:shadow-none',
         secondary:
-          'border-2 border-ink bg-canvas text-ink hover:bg-blue-tint active:translate-x-[1px] active:translate-y-[1px]',
+          'border-2 border-ink bg-paper text-ink hover:bg-mint-tint active:translate-x-[1px] active:translate-y-[1px]',
         quiet: 'text-ink hover:bg-blue-tint',
         link: 'text-link underline underline-offset-4 hover:decoration-2',
       },

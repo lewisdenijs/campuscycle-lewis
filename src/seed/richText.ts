@@ -8,7 +8,7 @@
 //
 //   richText([
 //     { heading: 'Where' },
-//     { paragraph: 'Workshop B, Student Centre.' },
+//     { paragraph: 'Room 0.14, Library building.' },
 //     { list: ['Tools', 'A tutor'] },
 //     { paragraph: ['Read ', { text: 'the licence', url: 'https://creativecommons.org/licenses/by-sa/4.0/' }, '.'] },
 //   ])

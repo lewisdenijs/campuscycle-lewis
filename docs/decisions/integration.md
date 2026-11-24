@@ -1,55 +1,58 @@
 # Decision: an integration
 
-Whether the site connects to another service, and to which. Its reader comes later, with one
-question: can I change this, and what happens if I do? Fill in every place marked TODO.
-
-Choose one integration from the course's suggested list (Integration Patterns: APIs and Webhooks, Your
-integration project's candidates): a chat window (tawk.to), an e-mail service for confirmations
-(Resend), a booking calendar (Cal.com), a newsletter sign-up, or a map (OpenStreetMap). None of these has
-been tried with this starter, so check the one you choose yourself. Never a payment provider: the brief
-rules out payments.
+Whether the site connects to another service, and to which.
 
 ## The question
 
-What had to be decided, in one sentence, and the need of your users behind it.
-
-TODO: the question this integration answers.
+How do users find the repair café on the campus? Users come once, often for the first time, with a
+broken device; "Room 0.14, Library building" alone does not tell a new student where to go.
 
 ## Options considered
 
-At least two, each with its main advantage and drawback (no integration at all is an option too).
-
-- TODO: option 1, its advantage and its drawback.
-- TODO: option 2, its advantage and its drawback.
+- **No integration: only the address in words.** Advantage: nothing leaves the site. Drawback: users
+  who do not know the campus must look the building up elsewhere.
+- **A map from OpenStreetMap** on the contact page. Advantage: free, no account, no key; the course's
+  recipe R11 shows how. Drawback: the map is another service's frame, and that service receives each
+  user's internet address when it loads.
+- **Confirmation e-mails with Resend.** Advantage: users get their booking in their inbox. Drawback:
+  needs an account, a key and a verified domain; this practice site has no real addresses to send to.
+- **A booking calendar from Cal.com.** Drawback: it would replace our own booking task, which is the
+  point of the project.
 
 ## The decision
 
-Which option you chose. Once it is installed: what you installed, where its settings are, and how you
-checked that it does what you expected (the final rubric asks for it).
+OpenStreetMap: its own embed (`openstreetmap.org/export/embed.html`) in an `iframe` on `/contact`,
+with a text link under it to the same map on its own page. The settings are the `bbox` and `marker`
+numbers in `src/app/(site)/contact/page.tsx`.
 
-TODO: the option you chose.
+Checked on the live site: `/contact` shows the map with the marker, the link under it opens the map
+on openstreetmap.org, and with the keyboard the frame can be reached and passed with Tab.
+
+TODO: the date it was checked on the live site.
 
 ## Why
 
-The reasons, each with its evidence.
-
-TODO: why you chose it.
+- It answers the users' need (finding the place) with the least set-up: no account, no key, no cost.
+- The embed is OpenStreetMap's own page, which shows the "© OpenStreetMap contributors" attribution
+  that its tile policy asks for.
+- The link under the map gives the same information to users who cannot use the frame.
 
 ## Consequences
 
-What you accepted with the choice, the bad with the good: accounts, costs, which personal data leaves
-your site, what happens when the service is down.
-
-TODO: the consequences.
+- When the map loads, openstreetmap.org receives the user's internet address, as with any page. The
+  privacy page says so, under "The map".
+- There is no guarantee of service: when OpenStreetMap is slow or down, the frame stays empty, but the
+  address in words and the link still work.
+- Heavy or automated use is not allowed by the tile policy; a small site with a few users a day is
+  normal interactive use.
 
 ## Facts read on
 
-The date you read each provider's pages, with their links: plans and limits change.
-
-TODO: each page you read, with its link and the date.
+- OpenStreetMap Foundation, Tile Usage Policy: <https://operations.osmfoundation.org/policies/tiles/>,
+  read on 24 November 2026 (normal interactive use allowed, visible attribution required, no bulk
+  downloading, availability is best effort with no guarantee).
 
 ## Review when
 
-The event that should make someone look at this decision again, such as reaching a plan's limit.
-
-TODO: when to review it.
+If the site starts sending many map views (thousands a day), or OpenStreetMap changes its tile policy:
+then consider a map provider with a plan, or a static image of the map.

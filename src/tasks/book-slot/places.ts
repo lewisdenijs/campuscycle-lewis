@@ -4,7 +4,7 @@
 // Three other parts still name the time slots and bookings themselves, so change them too when you
 // point this at other collections: preventCapacityReduction in src/lib/modelIntegrity.ts (a slot may
 // not get fewer places than its bookings), the default collection of lockTimeSlot in
-// src/lib/slotLock.ts, and the places count on the clinic page (src/app/(site)/clinics/[slug]/page.tsx).
+// src/lib/slotLock.ts, and the places count on the clinic page (src/app/(site)/repair-cafe/[slug]/page.tsx).
 //
 // For your own topic, point it at your own collections. A theatre site, for example, sells seats for
 // performances:

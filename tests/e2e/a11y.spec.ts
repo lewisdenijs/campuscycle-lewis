@@ -19,8 +19,13 @@ const pages = [
         { name: 'a topic', path: '/topics/brakes-and-gears' },
       ]
     : []),
-  { name: 'clinics', path: '/clinics' },
-  { name: 'the clinic', path: () => `/clinics/${readFixture().clinic.slug}` },
+  // Fixpoint's own pages: the repairs (task 2), one repair, and one device (the many-to-many's two sides).
+  { name: 'repairs', path: '/repairs' },
+  { name: 'repairs, filtered', path: '/repairs?device=laptop' },
+  { name: 'a repair', path: '/repairs/new-battery' },
+  { name: 'a device', path: '/devices/smartphone' },
+  { name: 'clinics', path: '/repair-cafe' },
+  { name: 'the clinic', path: () => `/repair-cafe/${readFixture().clinic.slug}` },
   { name: 'the confirmation', path: () => readFixture().confirmation },
   { name: 'about', path: '/about' },
   { name: 'privacy', path: '/privacy' },

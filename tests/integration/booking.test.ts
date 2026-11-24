@@ -17,8 +17,8 @@ import { SITE_NAME } from '../../src/content/campus-cycle'
 import { createBooking } from '../../src/tasks/book-slot/createBooking'
 import { allowRequest } from '../../src/tasks/book-slot/guards'
 import { bookingRef } from '../../src/tasks/book-slot/receipt'
-import ClinicPage, { generateMetadata as clinicMetadata } from '../../src/app/(site)/clinics/[slug]/page'
-import BookedPage from '../../src/app/(site)/clinics/[slug]/booked/page'
+import ClinicPage, { generateMetadata as clinicMetadata } from '../../src/app/(site)/repair-cafe/[slug]/page'
+import BookedPage from '../../src/app/(site)/repair-cafe/[slug]/booked/page'
 
 // These tests delete every booking, slot and clinic: never on a real database.
 refuseUnlessThrowAwayTestDatabase()
@@ -183,14 +183,15 @@ describe('example task 2: book a clinic slot', () => {
       expect((await p.count({ collection: 'throttle' })).totalDocs).toBe(1)
     })
 
-    it('saves only the whitelisted fields: member=1, repairs=… (before W6) and any other extra field are ignored', async () => {
+    it('saves only the whitelisted fields: member=1, repair ids that do not exist and any other extra field are ignored', async () => {
       const target = await slot(inDays(6))
       const result = await book({ timeSlot: String(target.id), member: '1', repairs: ['1', '2'], createdAt: '2000-01-01T00:00:00Z', id: '999' })
       expect(result.ok).toBe(true)
       const [saved] = await rows()
       // member exists for the optional members' area, but the form can never fill it in.
       expect(saved.member ?? null).toBeNull()
-      expect(saved).not.toHaveProperty('repairs')
+      // Fixpoint's form does send repairs, but ids of repairs that do not exist are dropped.
+      expect(saved.repairs ?? []).toEqual([])
       expect(saved.id).not.toBe(999)
       expect(saved.createdAt).not.toMatch(/^2000/)
     })
@@ -449,7 +450,7 @@ describe('example task 2: book a clinic slot', () => {
         expect(html, String(ref)).toContain(CANT_SHOW)
         expect(html, String(ref)).not.toContain('Your booking is saved')
         expect(html, String(ref)).not.toMatch(/9 October|16 October|Test Person/)
-        expect(html, String(ref)).toContain('href="/clinics/test-clinic"')
+        expect(html, String(ref)).toContain('href="/repair-cafe/test-clinic"')
       }
     })
   })

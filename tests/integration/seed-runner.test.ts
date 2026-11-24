@@ -78,7 +78,7 @@ describe('the seed runner (scripts/seed.mjs)', () => {
     await resetSiteFacts()
     const first = await runRunner({ DATABASE_URL: process.env.TEST_DATABASE_URL, ...admin }, folder)
     expect(first.status, first.stderr).toBe(0)
-    expect(first.stdout.split(/\r?\n/)).toContain(EXAMPLE.workshops ? 'SEED: created 21, kept 0' : 'SEED: created 7, kept 0')
+    expect(first.stdout.split(/\r?\n/)).toContain(EXAMPLE.workshops ? 'SEED: created 21, kept 0' : 'SEED: created 27, kept 0')
     expect(seedVerified(first)).toBe(true)
     // Its images went to the runner's own folder, not into the project.
     // 6 photos with the example's workshops, 2 without them (npm run remove-example).

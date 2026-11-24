@@ -14,10 +14,17 @@
  *   <html> className next to the first, then here:
  *       --font-heading: var(--font-fraunces), system-ui, serif;
  *
+ * FIXPOINT'S OWN DESIGN (it replaces the course starter's colours and heading font): a repair
+ * workshop. Near-black ink, warm "workbench" paper, a signal orange that says "fix it here" (the brand,
+ * on buttons and offsets), lime for what works ("success"), an electric blue for links and focus. The
+ * accent tokens keep the starter's names so every component still finds them; their VALUES are ours:
+ * coral = signal orange, mint = lime, purple = electric blue, yellow = amber.
+ * Headings use Space Grotesk, a technical, slightly squared typeface that fits devices and circuit
+ * boards; running text stays Hanken Grotesk for easy reading.
+ *
  * What the groups are for:
- * - Colour. The colours of the course "Building better websites": navy ink for text and frames, a white
- *   canvas, blue for links and the keyboard focus ring, and four bright accents (mint, purple, coral,
- *   yellow) with a lighter "tint" and an even lighter "wash" each. Text on a coloured background stays
+ * - Colour. Ink for text and frames, a paper canvas, blue for links and the keyboard focus ring, and
+ *   four bright accents with a lighter "tint" and an even lighter "wash" each. Text on a coloured background stays
  *   navy: the bright accents mark parts and states; they are never the colour of running text, because
  *   most of them are too light to read on white.
  * - States. success, warning, error and info each have a colour and a light background. A state is
@@ -39,43 +46,51 @@
 @import 'tailwindcss';
 
 @theme {
-  /* Colour: the course palette */
-  --color-ink: #001c54;
-  --color-ink-soft: #46597a;
-  --color-canvas: #ffffff;
-  --color-line: #cdd5e4;
-  --color-link: #0d51d7;
-  --color-focus: #0d51d7;
-  --color-blue-tint: #eaf0fd;
+  /* Colour: Fixpoint's workshop palette */
+  --color-ink: #15171c;
+  --color-ink-soft: #4f5563;
+  --color-canvas: #fbf8f3;
+  --color-paper: #ffffff;
+  --color-line: #e3ddd2;
+  --color-link: #1d47e0;
+  --color-focus: #1d47e0;
+  --color-blue-tint: #f1ece3;
 
-  --color-mint: #33dfc8;
-  --color-mint-tint: #b5ebe4;
-  --color-mint-wash: #e4fbf8;
-  --color-purple: #705bfe;
-  --color-purple-tint: #ccc2ff;
-  --color-purple-wash: #f1eeff;
-  --color-coral: #ff6868;
-  --color-coral-tint: #ffb5b5;
-  --color-coral-wash: #fff0f0;
-  --color-yellow: #ffcf11;
-  --color-yellow-tint: #ffeeac;
-  --color-yellow-wash: #fff9df;
+  /* mint = lime (what works) */
+  --color-mint: #b6f02c;
+  --color-mint-tint: #ddf8a2;
+  --color-mint-wash: #f3fbdf;
+  /* purple = electric blue */
+  --color-purple: #3d5cff;
+  --color-purple-tint: #c6d0ff;
+  --color-purple-wash: #eef1ff;
+  /* coral = signal orange, the brand */
+  --color-coral: #ff5c1f;
+  --color-coral-tint: #ffc4ab;
+  --color-coral-wash: #fff0e8;
+  /* yellow = amber */
+  --color-yellow: #ffb81c;
+  --color-yellow-tint: #ffe2a3;
+  --color-yellow-wash: #fff6e2;
+  /* errors keep a true red, so an error never looks like the brand */
+  --color-red: #d92d3a;
+  --color-red-wash: #fdecee;
 
   /* The site's signature colour: offsets behind framed items, the marker on the current page. */
-  --color-brand: var(--color-mint);
+  --color-brand: var(--color-coral);
 
   /* States: a colour for marks, a light background for boxes. The text on them stays ink. */
   --color-success: var(--color-mint);
   --color-success-wash: var(--color-mint-wash);
   --color-warning: var(--color-yellow);
   --color-warning-wash: var(--color-yellow-wash);
-  --color-error: var(--color-coral);
-  --color-error-wash: var(--color-coral-wash);
+  --color-error: var(--color-red);
+  --color-error-wash: var(--color-red-wash);
   --color-info: var(--color-link);
   --color-info-wash: var(--color-blue-tint);
 
   /* Type: next/font (in layout.tsx) puts the font's real name in --font-hanken-grotesk. */
-  --font-heading: var(--font-hanken-grotesk), system-ui, sans-serif;
+  --font-heading: var(--font-space-grotesk), var(--font-hanken-grotesk), system-ui, sans-serif;
   --font-body: var(--font-hanken-grotesk), system-ui, sans-serif;
   --font-sans: var(--font-body);
 
@@ -105,8 +120,8 @@
 
   /* Shape */
   --radius-control: 0.625rem;
-  --radius-frame: 0.875rem;
-  --radius-panel: 1.5rem;
+  --radius-frame: 1rem;
+  --radius-panel: 2rem;
   --frame-width: 2px;
   --offset-size: 6px;
 
@@ -144,7 +159,7 @@
 @utility framed {
   border: var(--frame-width) solid var(--color-ink);
   border-radius: var(--radius-frame);
-  background-color: var(--color-canvas);
+  background-color: var(--color-paper);
   box-shadow: var(--offset-size) var(--offset-size) 0 0 var(--offset-color, var(--color-brand));
 }
 
@@ -171,13 +186,13 @@
   h3,
   h4 {
     font-family: var(--font-heading);
-    font-weight: 850;
-    letter-spacing: -0.015em;
+    font-weight: 700;
+    letter-spacing: -0.03em;
     text-wrap: balance;
   }
 
   h1 {
-    font-weight: 900;
+    font-weight: 700;
   }
 
   /* Links are blue AND underlined: colour alone is not enough for everyone to spot a link. */
@@ -252,5 +267,46 @@
   & p,
   & li {
     max-width: var(--container-reading);
+  }
+}
+
+/*
+ * FIXPOINT'S OWN UTILITIES
+ * - grid-paper: the faint square grid of a cutting mat, behind page titles.
+ * - circuit: thin lines and dots like a circuit board, for the dark hero.
+ * - marker: an orange highlighter stroke under a word in a heading.
+ */
+@utility grid-paper {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--color-ink) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--color-ink) 7%, transparent) 1px, transparent 1px);
+  background-size: 28px 28px;
+}
+
+@utility circuit {
+  background-color: var(--color-ink);
+  background-image:
+    radial-gradient(circle at 1px 1px, color-mix(in oklab, var(--color-canvas) 18%, transparent) 1.5px, transparent 2px),
+    linear-gradient(to right, color-mix(in oklab, var(--color-canvas) 5%, transparent) 1px, transparent 1px);
+  background-size: 32px 32px, 128px 128px;
+}
+
+@utility marker {
+  background-image: linear-gradient(transparent 62%, var(--color-coral) 62%, var(--color-coral) 92%, transparent 92%);
+  padding-inline: 0.08em;
+}
+
+/* A dark part of a page (the hero, the footer): light text, light links, and a lime focus ring that
+   stands out on near-black (the blue ring would be too dark there). */
+@utility on-dark {
+  color: var(--color-canvas);
+  & a:not([data-variant]) {
+    color: var(--color-canvas);
+  }
+  & :focus-visible {
+    outline-color: var(--color-mint);
+  }
+  & [data-variant='primary'] {
+    box-shadow: 4px 4px 0 0 var(--color-mint);
   }
 }

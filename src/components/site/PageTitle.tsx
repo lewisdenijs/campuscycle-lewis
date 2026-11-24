@@ -9,7 +9,7 @@ import Image from 'next/image'
 import type { ReactNode } from 'react'
 import { cn } from '@/lib/utils'
 
-const TONES = { mint: 'bg-mint-wash', blue: 'bg-blue-tint', purple: 'bg-purple-wash', yellow: 'bg-yellow-wash' }
+const TONES = { mint: 'bg-coral-wash', blue: 'bg-purple-wash', purple: 'bg-purple-wash', yellow: 'bg-yellow-wash' }
 
 type PageTitleProps = {
   title: string
@@ -28,14 +28,14 @@ export function PageTitle({ title, intro, tone = 'mint', image, imageAccent = 'c
   return (
     <header
       className={cn(
-        'mt-6 mb-block grid items-center gap-8 rounded-panel p-6 sm:mt-10 sm:p-10 lg:px-14',
+        'grid-paper mt-6 mb-block grid items-center gap-8 rounded-panel border-2 border-ink p-6 sm:mt-10 sm:p-10 lg:px-14',
         image && 'md:grid-cols-[1.4fr_1fr]',
         TONES[tone],
         className,
       )}
     >
       <div className="grid gap-4">
-        <h1 className="max-w-[22ch] text-3xl">{title}</h1>
+        <h1 className="max-w-[22ch] text-4xl">{title}</h1>
         {intro && <p className="max-w-(--container-reading) text-lg">{intro}</p>}
         {children}
       </div>
