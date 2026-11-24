@@ -41,6 +41,23 @@ export default async function ContactPage() {
         </dl>
       )}
 
+      {questions.length > 0 && (
+        <section aria-labelledby="questions" className="mt-block grid max-w-(--container-reading) gap-4">
+          <h2 id="questions" className="text-2xl">Common questions</h2>
+          <div className="grid gap-3">
+            {questions.map((item) => (
+              <details key={item.id} className="group rounded-frame border-2 border-ink bg-paper">
+                <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 px-5 py-3 font-heading text-lg font-bold [&::-webkit-details-marker]:hidden">
+                  {item.question}
+                  <span aria-hidden="true" className="text-2xl leading-none transition-transform group-open:rotate-45">+</span>
+                </summary>
+                <p className="px-5 pb-4">{item.answer}</p>
+              </details>
+            ))}
+          </div>
+        </section>
+      )}
+
       {/* The map: OpenStreetMap's own embed (openstreetmap.org, Share, then HTML). The title says what
           the frame shows; the link below opens the same map for people who cannot use the frame. The
           privacy page says that OpenStreetMap receives each user's internet address when it loads. */}
@@ -53,18 +70,6 @@ export default async function ContactPage() {
       <p>
         <a href="https://www.openstreetmap.org/?mlat=51.0543&mlon=3.7212#map=17/51.0543/3.7212">Open the map on its own page</a>
       </p>
-
-      {questions.length > 0 && (
-        <section aria-labelledby="questions" className="mt-block grid max-w-(--container-reading) gap-4">
-          <h2 id="questions" className="text-2xl">Common questions</h2>
-          {questions.map((item) => (
-            <div key={item.id} className="grid gap-1">
-              <h3 className="text-xl">{item.question}</h3>
-              <p>{item.answer}</p>
-            </div>
-          ))}
-        </section>
-      )}
     </PlainPage>
   )
 }

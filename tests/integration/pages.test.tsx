@@ -76,7 +76,8 @@ describe('the public pages', () => {
 
   it("home: the home page record's title, and \"opens soon\" while there is no clinic", async () => {
     const page = html(await HomePage())
-    expect(page).toContain(seeded('home').title)
+    // The title's last word sits in its own <span> (the orange marker), so compare the text without tags.
+    expect(page.replace(/<[^>]+>/g, '')).toContain(seeded('home').title)
     expect(page).toContain('The repair café opens soon')
     expect(page).not.toContain('href="/repair-cafe/')
     // The pricing rule comes from the Site facts global.

@@ -74,9 +74,10 @@ export default async function HomePage() {
           <p className="text-sm font-bold tracking-[0.08em] text-ink-soft uppercase">How it works</p>
           <h2 id="how" className="text-3xl">Three steps to a working device</h2>
         </div>
-        <ol className="grid gap-block md:grid-cols-3">
+        {/* On a phone the steps swipe sideways, one card at a time (scroll-snap); from md up, three columns. */}
+        <ol className="flex snap-x snap-mandatory gap-4 overflow-x-auto pr-3 pb-4 [scrollbar-width:thin] md:grid md:grid-cols-3 md:gap-block md:overflow-visible md:pr-0 md:pb-0">
           {STEPS.map((step, index) => (
-            <li key={step.title} className="framed grid content-start gap-3 p-6 offset-ink [--offset-size:6px]">
+            <li key={step.title} className="framed grid w-[82%] shrink-0 snap-start content-start gap-3 p-6 offset-ink [--offset-size:6px] md:w-auto">
               <div className="flex items-center justify-between">
                 <span className="grid size-12 place-items-center rounded-control border-2 border-ink bg-coral">
                   <step.icon aria-hidden="true" className="size-6" />
@@ -98,12 +99,13 @@ export default async function HomePage() {
             <p className="text-sm font-bold tracking-[0.08em] text-ink-soft uppercase">What do you bring?</p>
             <h2 id="devices" className="text-3xl">Choose your device</h2>
           </div>
-          <ul className="grid gap-block sm:grid-cols-2 lg:grid-cols-4">
+          {/* The devices swipe sideways on a phone too; from sm up, a grid. */}
+          <ul className="flex snap-x snap-mandatory gap-4 overflow-x-auto pr-3 pb-4 [scrollbar-width:thin] sm:grid sm:grid-cols-2 sm:gap-block sm:overflow-visible sm:pr-0 sm:pb-0 lg:grid-cols-4">
             {devices.map((device) => {
               const its = (device.repairs?.docs ?? []).filter((repair) => typeof repair === 'object')
               const paid = its.map((repair) => repair.price).filter((price) => price > 0)
               return (
-                <li key={device.id} className="grid">
+                <li key={device.id} className="grid w-[70%] shrink-0 snap-start sm:w-auto">
                   <Link
                     href={`/devices/${device.slug}`}
                     className="framed group grid content-start gap-4 p-6 text-ink no-underline offset-coral transition-[translate,box-shadow] hover:-translate-y-1 hover:[--offset-size:10px]"

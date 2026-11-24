@@ -42,7 +42,7 @@ export function PageTitle({ title, intro, tone = 'mint', image, imageAccent = 'c
       {image && (
         <div
           className={cn(
-            'framed relative aspect-[3/2] overflow-hidden [--offset-size:8px]',
+            'framed relative hidden aspect-[3/2] overflow-hidden [--offset-size:8px] md:block',
             imageAccent === 'purple' ? 'offset-purple' : 'offset-coral',
           )}
         >

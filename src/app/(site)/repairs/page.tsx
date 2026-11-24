@@ -57,15 +57,15 @@ export default async function RepairsPage({ searchParams }: Props = {}) {
       />
 
       {/* One-tap choices: each link is the same filter as the form below, already chosen. */}
-      <nav aria-label="Repairs by device">
-        <ul className="flex flex-wrap gap-3">
+      <nav aria-label="Repairs by device" className="-mx-1 overflow-x-auto px-1 pb-2 sm:overflow-visible">
+        <ul className="flex flex-nowrap gap-3 sm:flex-wrap">
           {devices.map((item) => (
             <li key={item.id}>
               <Link
                 href={`/repairs?device=${item.slug}#results`}
                 aria-current={item.slug === chosen?.slug ? 'page' : undefined}
                 className={cn(
-                  'flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-4 py-2 font-semibold no-underline',
+                  'flex min-h-11 items-center gap-2 rounded-full border-2 border-ink px-4 py-2 font-semibold whitespace-nowrap no-underline',
                   item.slug === chosen?.slug ? 'bg-ink text-canvas' : 'bg-paper text-ink hover:bg-mint-tint',
                 )}
               >

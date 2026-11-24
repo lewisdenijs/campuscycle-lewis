@@ -15,7 +15,7 @@ import { BookingForm } from '@/components/site/BookingForm'
 import { Notice } from '@/components/site/Notice'
 import { PageTitle } from '@/components/site/PageTitle'
 import { ParentLink } from '@/components/site/ParentLink'
-import { formatSlotTime, formatWhen, imageFrom } from '@/lib/format'
+import { formatSlotTime, formatWhen, imageFrom, slotParts } from '@/lib/format'
 import { membersAreaOn, signedInMember } from '@/lib/membersArea'
 import config from '@/payload.config'
 
@@ -77,6 +77,7 @@ export default async function ClinicPage({ params }: Props) {
   const slots = upcoming.docs.map((slot) => ({
     id: slot.id,
     label: formatSlotTime(slot.startsAt),
+    ...slotParts(slot.startsAt),
     placesLeft: Math.max(0, slot.places - (taken.get(slot.id) ?? 0)),
   }))
   const allFull = slots.length > 0 && slots.every((slot) => slot.placesLeft === 0)
