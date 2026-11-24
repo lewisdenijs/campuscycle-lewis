@@ -11,8 +11,8 @@ protect them:
 
 | File | What it does |
 |---|---|
-| `src/app/(site)/clinics/[slug]/page.tsx` | The clinic's page: the clinic, its prices, and the booking form with the time slots that have not started yet and their places left |
-| `src/components/site/BookingForm.tsx` | The form: its fields, and W6's repair choice, ready to switch on |
+| `src/app/(site)/clinics/[slug]/page.tsx` | The clinic's page: the clinic, and the booking form with the time slots that have not started yet and their places left |
+| `src/components/site/BookingForm.tsx` | The form and its fields |
 | `src/components/site/BookingSubmitButton.tsx`, `src/components/site/BookingProblem.tsx` | The form's button ("Saving your booking…" while it is sent), and the box that says what went wrong when it was not saved |
 | `src/tasks/book-slot/typedValues.ts` | What the user typed, read from the form when no answer came back, so nothing is lost |
 | `src/components/site/SlotPicker.tsx` | "Choose a time": one radio button per slot, with "2 places left", "1 place left" or "Full" |
@@ -85,18 +85,3 @@ These stay as they are, because they keep the task safe and honest for every use
 - the made-up-data notice above the button, and the confirmation's exact words;
 - `export const dynamic = 'force-dynamic'` on both pages;
 - the tests: change their names and values to your content, and keep what they check.
-
-## W6: let the user choose repairs
-
-The repair choice is ready, switched off. After you add the `repairs` relationship to bookings (with
-its migration):
-
-1. In `src/components/site/BookingForm.tsx`, remove the `//` in front of every line of the function
-   `RepairChoice` (marked W6). Then replace the whole line
-   `{/* W6: <RepairChoice repairs={props.repairs} /> */}` with `<RepairChoice repairs={props.repairs} />`.
-   Each choice shows the repair's name; the price list sits above the form on the same page. To show
-   each repair's price in the choice too, copy the two lines the comment above `const label` gives.
-2. In `src/tasks/book-slot/createBooking.ts`, switch on the two lines the W6 comment in
-   createBooking.ts names: remove the `//` in front of `const repairs = formData.getAll('repairs')…` and in front of `repairs,` in
-   `payload.create`.
-3. Save a booking with two repairs, and find it on each repair's page in /admin.

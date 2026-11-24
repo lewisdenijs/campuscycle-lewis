@@ -82,20 +82,13 @@ describe('collection access', () => {
     const p = await getTestPayload()
     const options = { overrideAccess: false, user: editor }
     const page = await p.create({ collection: 'pages', data: { title: 'Test page', slug: 'test-page' }, ...options })
-    const examples: [CollectionSlug, number][] = []
-    if (EXAMPLE.workshops) {
-      const topic = await p.create({ collection: 'topics', data: { name: 'Test topic', slug: 'test-topic' }, ...options })
-      const workshop = await p.create({ collection: 'workshops', data: { title: 'Test workshop', slug: 'test-workshop', level: 'beginner', day: 'Tuesday', startTime: '18:30', price: 15, groupSize: 6, summary: 'Test instance.', topics: [topic.id] }, ...options })
-      examples.push(['workshops', workshop.id], ['topics', topic.id])
-    }
-    if (EXAMPLE.repairs) examples.push(['repairs', (await p.create({ collection: 'repairs', data: { name: 'Test repair', price: 5 }, ...options })).id])
     const clinic = await p.create({ collection: 'clinics', data: { name: 'Test clinic', slug: 'test-clinic', day: 'Saturday', startTime: '15:00', endTime: '17:00', summary: 'Test instance.' }, ...options })
     const slot = await p.create({ collection: 'timeSlots', data: { clinic: clinic.id, startsAt: '2026-10-10T13:00:00Z', places: 2 }, ...options })
     // A second editor account, so deleting `user` below never removes the last one (that is refused).
     await p.create({ collection: 'users', data: { email: 'editor@campuscycle.example', password: 'test-password-0123456789' }, ...options })
     const user = await p.create({ collection: 'users', data: { email: 'test@campuscycle.example', password: 'test-password-0123456789' }, ...options })
     const booking = await p.create({ collection: 'bookings', data: { timeSlot: slot.id, name: 'Test Person', email: 'private@campuscycle.example' }, overrideAccess: true })
-    const all: [CollectionSlug, number][] = [['bookings', booking.id], ['timeSlots', slot.id], ['clinics', clinic.id], ...examples, ['pages', page.id], ['users', user.id]]
+    const all: [CollectionSlug, number][] = [['bookings', booking.id], ['timeSlots', slot.id], ['clinics', clinic.id], ['pages', page.id], ['users', user.id]]
     for (const [collection, id] of all) {
       expect((await p.findByID({ collection, id, ...options })).id).toBe(id)
       await expect(p.update({ collection, id, data: {}, ...options })).resolves.toHaveProperty('id', id)

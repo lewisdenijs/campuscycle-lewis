@@ -45,11 +45,6 @@ export function placesLabel(placesLeft: number): string {
   return placesLeft === 1 ? '1 place left' : `${placesLeft} places left`
 }
 
-/** The stored level ("beginner") as users read it ("Beginner"). */
-export function levelLabel(level: string): string {
-  return level.charAt(0).toUpperCase() + level.slice(1)
-}
-
 /**
  * An image record from the media library, ready for next/image: its address, its description (alt)
  * and its size. Returns null when there is no image, or it was only stored as a number (depth 0).

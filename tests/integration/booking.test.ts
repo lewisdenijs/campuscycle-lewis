@@ -185,19 +185,12 @@ describe('example task 2: book a clinic slot', () => {
 
     it('saves only the whitelisted fields: member=1, repairs=… (before W6) and any other extra field are ignored', async () => {
       const target = await slot(inDays(6))
-      // After W6 the learner has switched the repairs on (bookings.repairs and the two createBooking
-      // lines): then the ticked repairs are saved, so they must be real ones.
-      const w6 = p.collections.bookings.config.flattenedFields.some((field) => field.name === 'repairs')
-      const repairIds = w6
-        ? [(await p.create({ collection: 'repairs', data: { name: 'Check', price: 10 } })).id, (await p.create({ collection: 'repairs', data: { name: 'Full service', price: 45 } })).id]
-        : [1, 2]
-      const result = await book({ timeSlot: String(target.id), member: '1', repairs: repairIds.map(String), createdAt: '2000-01-01T00:00:00Z', id: '999' })
+      const result = await book({ timeSlot: String(target.id), member: '1', repairs: ['1', '2'], createdAt: '2000-01-01T00:00:00Z', id: '999' })
       expect(result.ok).toBe(true)
       const [saved] = await rows()
       // member exists for the optional members' area, but the form can never fill it in.
       expect(saved.member ?? null).toBeNull()
-      if (w6) expect((saved as unknown as { repairs: unknown }).repairs).toEqual(repairIds)
-      else expect(saved).not.toHaveProperty('repairs')
+      expect(saved).not.toHaveProperty('repairs')
       expect(saved.id).not.toBe(999)
       expect(saved.createdAt).not.toMatch(/^2000/)
     })
@@ -359,10 +352,6 @@ describe('example task 2: book a clinic slot', () => {
       await slot(new Date(Date.now() - DAY))
       await book({ timeSlot: String(second.id), name: 'Private Booker', email: 'private@campuscycle.example', note: 'Private note' })
       await book({ timeSlot: String(third.id) })
-      if (EXAMPLE.repairs) {
-        await p.create({ collection: 'repairs', data: { name: 'Check', price: 10 } })
-        await p.create({ collection: 'repairs', data: { name: 'Full service', price: 45, description: 'Everything checked and adjusted.' } })
-      }
       const html = await clinicPage()
       expect(html).toContain('<h1')
       expect(html).toContain('Test clinic')
@@ -377,8 +366,6 @@ describe('example task 2: book a clinic slot', () => {
       // A full slot stays visible but cannot be chosen.
       expect(html).toMatch(new RegExp(`<input[^>]*disabled=""[^>]*value="${third.id}"|<input[^>]*value="${third.id}"[^>]*disabled=""`))
       expect(html).toMatch(new RegExp(`<input(?![^>]*disabled)[^>]*value="${first.id}"`))
-      // The price list, from the repair records, above the form; a description only where one exists.
-      if (EXAMPLE.repairs) expect(html).toMatch(/Check.*EUR 10.*Full service.*Everything checked and adjusted\..*EUR 45.*<form/s)
       // The form: the time group, persistent labels with required/optional in words, the notice, the button.
       expect(html).toMatch(/<fieldset[^>]*>.*<legend[^>]*>.*Choose a time/s)
       // The error box's links: "#timeSlot" goes to the whole group (its legend stays in view), and a

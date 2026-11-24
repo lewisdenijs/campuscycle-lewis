@@ -1,5 +1,5 @@
-// One clinic's page, /clinics/<slug>: example task 2, "book a clinic slot". It shows the clinic, its
-// prices, and the booking form with the time slots that have not started yet and their places left.
+// One clinic's page, /clinics/<slug>: example task 2, "book a clinic slot". It shows the clinic and
+// the booking form with the time slots that have not started yet and their places left.
 // The checks and the save are in src/tasks/book-slot/ (see its README.md).
 //
 // Bookings are private: this page reads only HOW MANY bookings each slot has, never a name or an
@@ -11,11 +11,10 @@ import { notFound } from 'next/navigation'
 import { getPayload } from 'payload'
 import { cache } from 'react'
 import { BookingForm } from '@/components/site/BookingForm'
-import { ButtonLink } from '@/components/site/ButtonLink'
 import { Notice } from '@/components/site/Notice'
 import { PageTitle } from '@/components/site/PageTitle'
 import { ParentLink } from '@/components/site/ParentLink'
-import { formatPrice, formatSlotTime, formatWhen, imageFrom } from '@/lib/format'
+import { formatSlotTime, formatWhen, imageFrom } from '@/lib/format'
 import { membersAreaOn, signedInMember } from '@/lib/membersArea'
 import config from '@/payload.config'
 
@@ -81,8 +80,6 @@ export default async function ClinicPage({ params }: Props) {
   }))
   const allFull = slots.length > 0 && slots.every((slot) => slot.placesLeft === 0)
 
-  // The price list: every repair record, in the order editors added them.
-  const repairs = (await payload.find({ collection: 'repairs', sort: 'createdAt', depth: 0, limit: 50 })).docs
   const picture = (await payload.find({ collection: 'media', where: { filename: { contains: CLINIC_IMAGE } }, limit: 1 })).docs[0]
   // The place, from the Site facts global (src/globals/SiteFacts.ts).
   const facts = await payload.findGlobal({ slug: 'site-facts', depth: 0 })
@@ -123,27 +120,7 @@ export default async function ClinicPage({ params }: Props) {
           <section aria-labelledby="about" className="grid gap-3">
             <h2 id="about" className="text-2xl">About the clinic</h2>
             <p className="max-w-(--container-reading)">{clinic.summary}</p>
-            {/* W5: show the clinic's "What to bring" list here, the same way this page shows its prices below. */}
           </section>
-
-          {repairs.length > 0 && (
-            <section aria-labelledby="prices" className="grid gap-3">
-              <h2 id="prices" className="text-2xl">Prices</h2>
-              {/* Each repair's name and price come from its own record, so a price changed in /admin is
-                  right here at once. A description shows only when the record has one. */}
-              <ul className="grid max-w-(--container-reading) divide-y divide-line border-y border-line">
-                {repairs.map((repair) => (
-                  <li key={repair.id} className="flex items-baseline justify-between gap-4 py-3">
-                    <span className="grid">
-                      <span className="font-semibold">{repair.name}</span>
-                      {repair.description && <span className="text-ink-soft">{repair.description}</span>}
-                    </span>
-                    <span className="font-semibold whitespace-nowrap">{formatPrice(repair.price)}</span>
-                  </li>
-                ))}
-              </ul>
-            </section>
-          )}
 
           <section aria-labelledby="book" className="framed grid gap-5 p-5 offset-coral sm:p-8">
             <h2 id="book" className="text-2xl">Book a time slot</h2>
@@ -154,18 +131,15 @@ export default async function ClinicPage({ params }: Props) {
             ) : allFull ? (
               <Notice tone="warning" label="Fully booked">
                 <p className="font-semibold">Every time slot is full.</p>
-                <p>Check this page again later, or learn to do a repair yourself in a workshop.</p>
-                <ButtonLink href="/workshops" variant="secondary" className="mt-2 w-fit">Find a workshop</ButtonLink>
+                <p>Check this page again later: a place frees up when someone cancels.</p>
               </Notice>
             ) : (
               // The time slots are shown inside the form, by SlotPicker (src/components/site/SlotPicker.tsx).
               // requestId: a new random code for each form, so the same form sent twice saves one booking.
-              // repairs: only what the form needs (W6's repair choice) goes to the browser.
               <BookingForm
                 clinic={clinic.slug}
                 slots={slots}
                 requestId={randomUUID()}
-                repairs={repairs.map(({ id, name, price }) => ({ id, name, price }))}
                 member={member && { name: member.name ?? '', email: member.email }}
               />
             )}
