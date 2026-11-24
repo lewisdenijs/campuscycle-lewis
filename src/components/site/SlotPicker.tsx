@@ -11,8 +11,11 @@
 //   its day's heading. Once the page is interactive, only the chosen day's times show.
 // - The day buttons say which one is chosen (aria-pressed), and the times of the chosen day follow
 //   right after them, so a keyboard or screen reader user goes from the day straight to its times.
+// - The whole row of days is ONE stop for Tab (only the chosen day can be tabbed to); the left and right
+//   arrow keys move to the previous or next day and open it. Before, a keyboard user had to press Tab
+//   past every Saturday (18 of them) to reach the times: found in the release check of 24 November 2026.
 // - When the form comes back with an error, the day of the time the user had chosen is open again.
-import { useMemo, useState, useSyncExternalStore } from 'react'
+import { type KeyboardEvent, useMemo, useState, useSyncExternalStore } from 'react'
 import { FieldError } from '@/components/site/FieldError'
 import { placesLabel } from '@/lib/format'
 import { cn } from '@/lib/utils'
@@ -73,6 +76,19 @@ export function SlotPicker({ slots, selected, error }: SlotPickerProps) {
   // (useSyncExternalStore: the server's answer is false, the browser's true, without a second render.)
   const interactive = useSyncExternalStore(noChanges, () => true, () => false)
 
+  // Left and right arrows (Home and End too) open the previous, next, first or last day and move the
+  // keyboard's focus to its button, which also scrolls it into view in the swipe row.
+  function moveDay(event: KeyboardEvent<HTMLButtonElement>, key: string) {
+    const index = days.findIndex((day) => day.key === key)
+    const next =
+      event.key === 'ArrowRight' ? index + 1 : event.key === 'ArrowLeft' ? index - 1 : event.key === 'Home' ? 0 : event.key === 'End' ? days.length - 1 : null
+    if (next === null || next < 0 || next >= days.length) return
+    event.preventDefault()
+    setOpenDay(days[next].key)
+    const buttons = event.currentTarget.closest('ul')?.querySelectorAll('button')
+    buttons?.[next]?.focus()
+  }
+
   return (
     <fieldset id="timeSlot" tabIndex={-1} aria-describedby={error ? 'timeSlot-error' : undefined} className="grid min-w-0 scroll-mt-6 gap-4">
       <legend className="mb-3 text-base font-semibold">
@@ -83,7 +99,7 @@ export function SlotPicker({ slots, selected, error }: SlotPickerProps) {
       {interactive && days.length > 1 && (
         // The days: a row that swipes sideways on a phone (scroll-snap), and wraps on a wide screen.
         <div className="-mx-1 overflow-x-auto px-1 pb-2 [scrollbar-width:thin] sm:overflow-visible">
-          <ul className="flex snap-x snap-mandatory gap-2 sm:flex-wrap" aria-label="Days">
+          <ul className="flex snap-x snap-mandatory gap-2 sm:flex-wrap" aria-label="Days (use the left and right arrow keys)">
             {days.map((day) => {
               const open = day.key === openDay
               const full = day.placesLeft === 0
@@ -92,7 +108,9 @@ export function SlotPicker({ slots, selected, error }: SlotPickerProps) {
                   <button
                     type="button"
                     aria-pressed={open}
+                    tabIndex={open ? 0 : -1}
                     onClick={() => setOpenDay(day.key)}
+                    onKeyDown={(event) => moveDay(event, day.key)}
                     className={cn(
                       'grid min-h-11 min-w-22 cursor-pointer place-items-center gap-0.5 rounded-control border-2 border-ink px-3 py-2 text-center whitespace-nowrap',
                       open ? 'bg-ink text-canvas' : 'bg-paper text-ink hover:bg-mint-tint',
