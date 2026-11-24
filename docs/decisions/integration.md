@@ -28,7 +28,7 @@ numbers in `src/app/(site)/contact/page.tsx`.
 Checked on the live site: `/contact` shows the map with the marker, the link under it opens the map
 on openstreetmap.org, and with the keyboard the frame can be reached and passed with Tab.
 
-TODO: the date it was checked on the live site.
+Checked on 24 November 2026 on the live site: the map frame (titled "Map: where to find Fixpoint") and the link under it are on `/contact`.
 
 ## Why
 
