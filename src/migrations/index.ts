@@ -6,6 +6,7 @@ import * as migration_20261004_205526_booking_request_id from './20261004_205526
 import * as migration_20261004_222941_members_area from './20261004_222941_members_area';
 import * as migration_20261026_134541_what_to_bring from './20261026_134541_what_to_bring';
 import * as migration_20261123_100902_booking_repairs from './20261123_100902_booking_repairs';
+import * as migration_20261124_102301_remove_example from './20261124_102301_remove_example';
 
 export const migrations = [
   {
@@ -46,6 +47,11 @@ export const migrations = [
   {
     up: migration_20261123_100902_booking_repairs.up,
     down: migration_20261123_100902_booking_repairs.down,
-    name: '20261123_100902_booking_repairs'
+    name: '20261123_100902_booking_repairs',
+  },
+  {
+    up: migration_20261124_102301_remove_example.up,
+    down: migration_20261124_102301_remove_example.down,
+    name: '20261124_102301_remove_example'
   },
 ];

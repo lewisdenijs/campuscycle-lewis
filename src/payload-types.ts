@@ -71,12 +71,9 @@ export interface Config {
     users: User;
     media: Media;
     pages: Page;
-    topics: Topic;
-    workshops: Workshop;
     clinics: Clinic;
     timeSlots: TimeSlot;
     bookings: Booking;
-    repairs: Repair;
     throttle: Throttle;
     members: Member;
     'payload-kv': PayloadKv;
@@ -85,16 +82,10 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
-    topics: {
-      workshops: 'workshops';
-    };
     clinics: {
       timeSlots: 'timeSlots';
     };
     timeSlots: {
-      bookings: 'bookings';
-    };
-    repairs: {
       bookings: 'bookings';
     };
   };
@@ -102,12 +93,9 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
-    topics: TopicsSelect<false> | TopicsSelect<true>;
-    workshops: WorkshopsSelect<false> | WorkshopsSelect<true>;
     clinics: ClinicsSelect<false> | ClinicsSelect<true>;
     timeSlots: TimeSlotsSelect<false> | TimeSlotsSelect<true>;
     bookings: BookingsSelect<false> | BookingsSelect<true>;
-    repairs: RepairsSelect<false> | RepairsSelect<true>;
     throttle: ThrottleSelect<false> | ThrottleSelect<true>;
     members: MembersSelect<false> | MembersSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
@@ -254,77 +242,6 @@ export interface Page {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "topics".
- */
-export interface Topic {
-  id: number;
-  name: string;
-  /**
-   * The last part of the web address, for example repair-a-puncture. Use lowercase letters, digits and hyphens.
-   */
-  slug: string;
-  description?: string | null;
-  workshops?: {
-    docs?: (number | Workshop)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workshops".
- */
-export interface Workshop {
-  id: number;
-  title: string;
-  /**
-   * The last part of the web address, for example repair-a-puncture. Use lowercase letters, digits and hyphens.
-   */
-  slug: string;
-  level: 'beginner' | 'intermediate';
-  day: 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday' | 'Saturday' | 'Sunday';
-  /**
-   * Use the 24-hour clock, for example 18:30.
-   */
-  startTime: string;
-  /**
-   * Use the 24-hour clock, for example 20:00. Leave empty if the workshop has none.
-   */
-  endTime?: string | null;
-  /**
-   * Only for a workshop with no end time that must be over by a certain time. Use the 24-hour clock, for example 15:00. Pages show "ends by 15:00".
-   */
-  latestEnd?: string | null;
-  price: number;
-  /**
-   * The largest number of people in one workshop.
-   */
-  groupSize: number;
-  summary: string;
-  description?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  image?: (number | null) | Media;
-  topics?: (number | Topic)[] | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clinics".
  */
 export interface Clinic {
@@ -395,7 +312,6 @@ export interface Booking {
   name: string;
   email: string;
   note?: string | null;
-  repairs?: (number | Repair)[] | null;
   /**
    * The member who was logged in when they booked (members' area only).
    */
@@ -404,23 +320,6 @@ export interface Booking {
    * Filled in by the booking form. It stops the same form from saving two bookings.
    */
   requestId?: string | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "repairs".
- */
-export interface Repair {
-  id: number;
-  name: string;
-  price: number;
-  description?: string | null;
-  bookings?: {
-    docs?: (number | Booking)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
   updatedAt: string;
   createdAt: string;
 }
@@ -500,14 +399,6 @@ export interface PayloadLockedDocument {
         value: number | Page;
       } | null)
     | ({
-        relationTo: 'topics';
-        value: number | Topic;
-      } | null)
-    | ({
-        relationTo: 'workshops';
-        value: number | Workshop;
-      } | null)
-    | ({
         relationTo: 'clinics';
         value: number | Clinic;
       } | null)
@@ -518,10 +409,6 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'bookings';
         value: number | Booking;
-      } | null)
-    | ({
-        relationTo: 'repairs';
-        value: number | Repair;
       } | null)
     | ({
         relationTo: 'throttle';
@@ -641,39 +528,6 @@ export interface PagesSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "topics_select".
- */
-export interface TopicsSelect<T extends boolean = true> {
-  name?: T;
-  slug?: T;
-  description?: T;
-  workshops?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "workshops_select".
- */
-export interface WorkshopsSelect<T extends boolean = true> {
-  title?: T;
-  slug?: T;
-  level?: T;
-  day?: T;
-  startTime?: T;
-  endTime?: T;
-  latestEnd?: T;
-  price?: T;
-  groupSize?: T;
-  summary?: T;
-  description?: T;
-  image?: T;
-  topics?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "clinics_select".
  */
 export interface ClinicsSelect<T extends boolean = true> {
@@ -715,21 +569,8 @@ export interface BookingsSelect<T extends boolean = true> {
   name?: T;
   email?: T;
   note?: T;
-  repairs?: T;
   member?: T;
   requestId?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "repairs_select".
- */
-export interface RepairsSelect<T extends boolean = true> {
-  name?: T;
-  price?: T;
-  description?: T;
-  bookings?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -815,11 +656,11 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
 export interface SiteFact {
   id: number;
   /**
-   * Shown on the home page and on every workshop page.
+   * Shown on the home page.
    */
   pricingRule: string;
   /**
-   * Where the workshops and the clinic are. Shown on the Contact page and on every workshop page.
+   * Where the clinic is. Shown on the Contact page and on the clinic page.
    */
   place: string;
   /**

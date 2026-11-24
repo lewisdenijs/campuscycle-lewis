@@ -6,7 +6,7 @@ import type { PoolClient } from 'pg'
 import { getPayload, type Payload } from 'payload'
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, vi } from 'vitest'
 import * as route from '../../src/app/api/course-check/route'
-import { hasRepairsRelation, hasWhatToBringList, type FieldShape, type TeamSection } from '../../src/lib/courseCheck'
+import { type FieldShape, type TeamSection } from '../../src/lib/courseCheck'
 import { courseCheckResponse } from '../../src/lib/courseCheckResponse'
 import { allowRequest } from '../../src/tasks/book-slot/guards'
 import { afterW6Config, collections as fixtureCollections, type Shape } from '../fixtures/config-after-w6'
@@ -108,7 +108,6 @@ describe('the course check, before W5 and W6 (the app as it ships)', () => {
     expect((await fixtureCollections('shipped')).map((collection) => collection.slug)).toEqual(appSlugs)
     expect(fieldsOf(p, 'clinics').some((field) => field.name === 'whatToBring')).toBe(false)
     expect(fieldsOf(p, 'bookings').some((field) => field.name === 'repairs')).toBe(false)
-    if (EXAMPLE.repairs) expect((p.collections.repairs.config.flattenedFields as readonly FieldShape[]).some((field) => field.name === 'bookings')).toBe(false)
   })
 
   it('a clinic whose summary holds the code: clinic yes, no list (before W5), no booking (before W6)', async () => {
@@ -304,39 +303,6 @@ describe('the course check, before W5 and W6 (the app as it ships)', () => {
     expect((await teamOf(response)).transactional).toEqual({ collection: 'bookings', status: 'ok', codeField: 'name', newest: { id: String(mine.id), createdAt: new Date(mine.createdAt).toISOString() } })
   })
 
-  it.runIf(EXAMPLE.repairs)("team: reads the team's own config: another collection, a name field that is not text, a missing collection", async () => {
-    const clinic = await addClinic(p, 'Code BW-7F3K.')
-    const repair = await p.create({ collection: 'repairs', data: { name: 'Flat tyre K7Q2', price: 10 } })
-    await addBooking(p, clinic.id, 'Mina K7Q2')
-    const withConfig = (transactional: { collection: string; nameField?: string }) => (incoming: Request) =>
-      courseCheckResponse(incoming, { payload: p, teamConfig: { transactional } })
-    const repairs = await teamOf(await withConfig({ collection: 'repairs', nameField: 'name' })(request('?include=team&code=K7Q2')))
-    expect(repairs.transactional).toEqual({ collection: 'repairs', status: 'ok', codeField: 'name', newest: { id: String(repair.id), createdAt: new Date(repair.createdAt).toISOString() } })
-    // `price` is a number: it is never searched, and the newest repair answers all the same.
-    const byPrice = await teamOf(await withConfig({ collection: 'repairs', nameField: 'price' })(request('?include=team&code=K7Q2')))
-    expect(byPrice.transactional).toEqual({ collection: 'repairs', status: 'ok', codeField: null, newest: { id: String(repair.id), createdAt: new Date(repair.createdAt).toISOString() } })
-    const missing = await teamOf(await withConfig({ collection: 'orders' })(request('?include=team')))
-    expect(missing.transactional).toEqual({ collection: 'orders', status: 'missing', codeField: null, newest: null })
-  })
-
-  it.runIf(EXAMPLE.repairs && EXAMPLE.workshops)('team: a collection that cannot be read answers null or unreadable, the rest still answers, and the log has the details', async () => {
-    const log = vi.spyOn(console, 'error').mockImplementation(() => {})
-    const problem = new Error('relation "repairs" does not exist (secret detail)')
-    const count = p.count.bind(p)
-    vi.spyOn(p, 'count').mockImplementation(((args: Parameters<Payload['count']>[0]) => (args.collection === 'repairs' ? Promise.reject(problem) : count(args))) as never)
-    const find = p.find.bind(p)
-    vi.spyOn(p, 'find').mockImplementation(((args: Parameters<Payload['find']>[0]) => (args.collection === 'bookings' ? Promise.reject(problem) : find(args))) as never)
-    const response = await answer(request('?include=team'))
-    const body = await response.clone().text()
-    const team = await teamOf(response)
-    expect(team.collections.find((collection) => collection.slug === 'repairs')?.count).toBeNull()
-    expect(team.collections.find((collection) => collection.slug === 'topics')?.count).toBe(0)
-    expect(team.transactional).toEqual({ collection: 'bookings', status: 'unreadable', codeField: null, newest: null })
-    expect(body.includes('secret detail')).toBe(false)
-    expect(log).toHaveBeenCalledWith('The course check could not count the collection repairs:', problem)
-    expect(log).toHaveBeenCalledWith('The course check could not read the collection bookings:', problem)
-  })
-
   it('the route itself answers the team section from the app, with the starter config (bookings)', async () => {
     const team = await teamOf(await route.GET(request('?include=team')))
     expect(team.transactional.collection).toBe('bookings')
@@ -375,138 +341,3 @@ async function closeFixture(base: Payload, fixture: Payload | undefined, schema:
 }
 
 const fieldsOf = (p: Payload, slug: 'clinics' | 'bookings') => p.collections[slug].config.flattenedFields as readonly FieldShape[]
-
-describe.runIf(EXAMPLE.repairs && EXAMPLE.workshops)('the course check after W5 and W6 (tests/fixtures/config-after-w6.ts)', () => {
-  const schema = 'course_check_after_w6'
-  let base: Payload
-  let p: Payload
-  let repairIds: number[]
-  const check = async (query: string) => seen(await courseCheckResponse(request(query), { payload: p }))
-
-  beforeAll(async () => {
-    base = await getTestPayload()
-    p = await openFixture(base, 'agreed', schema)
-  }, 120_000)
-  beforeEach(async () => {
-    for (const slug of clean) await p.db.deleteMany({ collection: slug as never, where: { id: { exists: true } } })
-    repairIds = []
-    for (const name of ['Flat tyre', 'Brake check', 'Chain']) {
-      repairIds.push((await p.create({ collection: 'repairs', data: { name, price: 10 } })).id as number)
-    }
-  })
-  afterAll(() => closeFixture(base, p, schema))
-
-  it('is the app with only the two W5/W6 fields added, in the agreed shapes', async () => {
-    const appSlugs = base.config.collections.map((collection) => collection.slug).filter((slug) => !slug.startsWith('payload-'))
-    expect((await fixtureCollections('agreed')).map((collection) => collection.slug)).toEqual(appSlugs)
-    expect(hasWhatToBringList(fieldsOf(p, 'clinics'))).toBe(true)
-    expect(hasRepairsRelation(fieldsOf(p, 'bookings'))).toBe(true)
-    // Each field once, also when the app has it itself (a learner's copy after W5 and W6).
-    for (const [slug, name] of [['clinics', 'whatToBring'], ['bookings', 'repairs']] as const) {
-      expect(fieldsOf(p, slug).filter((field) => field.name === name), `${slug}.${name}`).toHaveLength(1)
-    }
-  })
-
-  it("answers the clinic's list and yes for a booking with the code and two repairs", async () => {
-    const clinic = await addClinic(p, 'Saturday repair clinic. Code BW-7F3K.', { whatToBring: [{ item: 'your bike' }, { item: 'a lock' }] })
-    const booking = await addBooking(p, clinic.id as number, 'Mina BW-7F3K', { repairs: repairIds.slice(0, 2) })
-    expect(await check('?code=bw-7f3k')).toEqual(ok(true, ['your bike', 'a lock'], true))
-    // The reverse side W6 adds (repairs.bookings) shows the booking; the route itself never reads it.
-    const repair = await p.findByID({ collection: 'repairs', id: repairIds[0], depth: 0 })
-    expect((repair as unknown as { bookings: { docs: unknown[] } }).bookings.docs).toEqual([booking.id])
-  })
-
-  it("answers the same for the course app's team code, only as a whole token", async () => {
-    const clinic = await addClinic(p, 'Team T29-7G6N, Saturday.', { whatToBring: [{ item: 'your bike' }] })
-    await addBooking(p, clinic.id as number, 'Team T29-7G6NX', { repairs: repairIds.slice(0, 2) })
-    expect(await check('?code=T29-7G6N')).toEqual(ok(true, ['your bike'], false))
-    await addBooking(p, clinic.id as number, 'Team T29-7G6N', { repairs: repairIds.slice(0, 2) })
-    expect(await check('?code=t29-7g6n')).toEqual(ok(true, ['your bike'], true))
-  })
-
-  it('answers no for a booking with only one repair, or without the code in its name', async () => {
-    const clinic = await addClinic(p, 'Code BW-7F3K.', { whatToBring: [{ item: 'your bike' }] })
-    await addBooking(p, clinic.id as number, 'Mina BW-7F3K', { repairs: [repairIds[0]] })
-    await addBooking(p, clinic.id as number, 'Mina BW-7F3KX', { repairs: repairIds })
-    await addBooking(p, clinic.id as number, 'Somebody else', { repairs: repairIds })
-    expect(await check('?code=BW-7F3K')).toEqual(ok(true, ['your bike'], false))
-  })
-
-  it('reads the most recently updated clinic with the code, and [] for a list with no rows', async () => {
-    const older = await addClinic(p, 'Code BW-7F3K.', { whatToBring: [{ item: 'your bike' }, { item: 'a lock' }] })
-    await addClinic(p, 'Code BW-7F3K, the second one.', { whatToBring: [{ item: 'a pump' }] })
-    await addClinic(p, 'No code here.', { whatToBring: [{ item: 'not this one' }] })
-    expect(await check('?code=BW-7F3K')).toEqual(ok(true, ['a pump'], false))
-    await new Promise((resolve) => setTimeout(resolve, 5))
-    await p.update({ collection: 'clinics', id: older.id, data: { whatToBring: [{ item: 'a helmet' }, { item: 'your bike' }] } as never })
-    expect(await check('?code=BW-7F3K')).toEqual(ok(true, ['a helmet', 'your bike'], false))
-    await new Promise((resolve) => setTimeout(resolve, 5))
-    await p.update({ collection: 'clinics', id: older.id, data: { whatToBring: [] } as never })
-    expect(await check('?code=BW-7F3K')).toEqual(ok(true, [], false))
-  })
-
-  it('without a code: the newest clinic and any booking with two repairs', async () => {
-    expect(await check('')).toEqual(ok(false, null, false))
-    await addClinic(p, 'Last term.', { whatToBring: [{ item: 'an old list' }] })
-    await new Promise((resolve) => setTimeout(resolve, 5))
-    const clinic = await addClinic(p, 'Saturday repair clinic.', { whatToBring: [{ item: 'your bike' }, { item: 'a lock' }] })
-    await addBooking(p, clinic.id as number, 'Somebody', { repairs: [repairIds[0]] })
-    expect(await check('')).toEqual(ok(true, ['your bike', 'a lock'], false))
-    await addBooking(p, clinic.id as number, 'Somebody else', { repairs: repairIds.slice(1) })
-    expect(await check('')).toEqual(ok(true, ['your bike', 'a lock'], true))
-  })
-
-  it('never answers with a name, an e-mail address, a note or an id', async () => {
-    const clinic = await addClinic(p, 'Code BW-7F3K.', { whatToBring: [{ item: 'your bike' }, { item: 'a lock' }] })
-    const booking = await addBooking(p, clinic.id as number, 'Mina Peeters BW-7F3K', { repairs: repairIds })
-    for (const query of ['?code=BW-7F3K', '']) {
-      const body = (await check(query)).body
-      const parsed = JSON.parse(body) as Record<string, unknown>
-      expect(Object.keys(parsed), query).toEqual(['clinic', 'whatToBring', 'booking'])
-      expect(parsed, query).toEqual({ clinic: true, whatToBring: ['your bike', 'a lock'], booking: true })
-      for (const secret of ['Mina', 'mina.peeters', '@', 'Back brake', `"id"`, String(booking.id), String(clinic.id)]) {
-        expect(body.includes(secret), `${query}: ${secret}`).toBe(false)
-      }
-    }
-  })
-
-  it("team: W6's many-to-many shows with its join, and the team section holds no name, e-mail address or note", async () => {
-    const clinic = await addClinic(p, 'Code BW-7F3K.', { whatToBring: [{ item: 'your bike' }] })
-    const booking = await addBooking(p, clinic.id as number, 'Mina Peeters BW-7F3K', { repairs: repairIds })
-    for (const query of ['?include=team&code=BW-7F3K', '?include=team']) {
-      const response = await courseCheckResponse(request(query), { payload: p })
-      const body = await response.clone().text()
-      const team = await teamOf(response)
-      expect(team.manyToMany, query).toEqual([
-        { from: 'workshops', field: 'topics', to: 'topics', join: 'workshops' },
-        { from: 'bookings', field: 'repairs', to: 'repairs', join: 'bookings' },
-      ])
-      expect(team.collections.find((collection) => collection.slug === 'repairs')?.count, query).toBe(3)
-      expect(team.transactional.newest, query).toEqual({ id: String(booking.id), createdAt: new Date(booking.createdAt).toISOString() })
-      for (const secret of ['Mina', 'mina.peeters', '@', 'Back brake', 'Flat tyre', 'your bike']) {
-        expect(JSON.stringify(team).includes(secret), `${query}: ${secret}`).toBe(false)
-      }
-      expect(body.includes('mina.peeters'), query).toBe(false)
-    }
-  })
-})
-
-describe.runIf(EXAMPLE.repairs)('the course check with the two fields in another shape', () => {
-  const schema = 'course_check_other_shape'
-  let base: Payload
-  let p: Payload
-
-  beforeAll(async () => {
-    base = await getTestPayload()
-    p = await openFixture(base, 'other', schema)
-  }, 120_000)
-  afterAll(() => closeFixture(base, p, schema))
-
-  it('a textarea list answers null, and a link to one repair only answers no', async () => {
-    const clinic = await addClinic(p, 'Code BW-7F3K.', { whatToBring: 'your bike, a lock' })
-    const repair = await p.create({ collection: 'repairs', data: { name: 'Flat tyre', price: 10 } })
-    await addBooking(p, clinic.id as number, 'Mina BW-7F3K', { repairs: repair.id })
-    expect(await seen(await courseCheckResponse(request('?code=BW-7F3K'), { payload: p }))).toEqual(ok(true, null, false))
-    expect(await seen(await courseCheckResponse(request(''), { payload: p }))).toEqual(ok(true, null, false))
-  })
-})

@@ -2,8 +2,8 @@
 
 // What this is: tells the analytics tool that the user reached a key step (track() in
 // src/lib/analytics.ts), once, when the page has opened in the browser. It shows nothing on the page.
-// A page puts it where the step has really happened: the workshop list when filters are applied, the
-// confirmation page when a booking was saved. Without JavaScript the page works the same; only the
+// A page puts it where the step has really happened: the confirmation page when a booking was saved,
+// or a list page when its filters are applied. Without JavaScript the page works the same; only the
 // count is missing.
 //
 // `once`: a name for this one step, such as the booking's number or the filters chosen. The browser

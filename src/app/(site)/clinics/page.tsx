@@ -38,8 +38,6 @@ export default async function ClinicsPage() {
         <Notice tone="warning" label="Not open yet" className="max-w-3xl">
           <p className="font-heading text-xl font-extrabold">The repair clinic opens soon</p>
           <p>When it opens, you can book a time slot on this page and bring your bicycle for a check or a repair.</p>
-          <p>Until then, you can learn to do it yourself in a workshop.</p>
-          <ButtonLink href="/workshops" variant="secondary" className="mt-2 w-fit">Find a workshop</ButtonLink>
         </Notice>
       ) : (
         <ul className="grid max-w-3xl gap-block">

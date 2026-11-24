@@ -32,8 +32,7 @@ export const Bookings: CollectionConfig = {
     ],
   },
   fields: [
-    // Every booking belongs to exactly one time slot. A later exercise in the course adds a second
-    // relationship here: repairs.
+    // Every booking belongs to exactly one time slot.
     {
       name: 'timeSlot',
       type: 'relationship',
@@ -58,7 +57,6 @@ export const Bookings: CollectionConfig = {
       type: 'textarea',
     },
     // Add new booking fields here.
-    { name: 'repairs', type: 'relationship', relationTo: 'repairs', hasMany: true },
 
     // The optional members' area (src/lib/membersArea.ts): the member who was logged in when they
     // booked. Only the booking form's server code fills it in, from the log-in cookie, never from what

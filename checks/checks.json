@@ -74,58 +74,6 @@
       "path": "/"
     },
     {
-      "path": "/workshops",
-      "groups": [
-        {
-          "criterion": 3,
-          "steps": [
-            {
-              "selector": "form :is(input, select, textarea):not([type=\"hidden\"], [type=\"submit\"], [type=\"button\"], [type=\"reset\"], [id], [aria-label], [aria-labelledby]):not(label *)",
-              "count": 0
-            },
-            {
-              "selector": "label[for=\"filter-topic\"]",
-              "count": 1
-            },
-            {
-              "selector": "label[for=\"filter-level\"]",
-              "count": 1
-            }
-          ],
-          "fix": "Give every form field a visible <label> whose for= matches the field's id, or put the field inside its <label>."
-        }
-      ]
-    },
-    {
-      "path": "/workshops?topic=brakes-and-gears&level=beginner",
-      "groups": [
-        {
-          "criterion": 3,
-          "steps": [
-            {
-              "selector": "form :is(input, select, textarea):not([type=\"hidden\"], [type=\"submit\"], [type=\"button\"], [type=\"reset\"], [id], [aria-label], [aria-labelledby]):not(label *)",
-              "count": 0
-            },
-            {
-              "selector": "label[for=\"filter-topic\"]",
-              "count": 1
-            },
-            {
-              "selector": "label[for=\"filter-level\"]",
-              "count": 1
-            }
-          ],
-          "fix": "Give every form field a visible <label> whose for= matches the field's id, or put the field inside its <label>."
-        }
-      ]
-    },
-    {
-      "path": "/workshops/adjust-your-brakes"
-    },
-    {
-      "path": "/topics/brakes-and-gears"
-    },
-    {
       "path": "/clinics"
     },
     {
