@@ -11,7 +11,9 @@ go live, and later by whoever improves it.
 - **The condition:** the live site <https://campuscycle-lewis.vercel.app>.
 - **The person, the device and the date:**
 
-TODO: the version (the commit shown in Vercel → Deployments), the device and its browser, who took part (for example "a fellow student", or "nobody else: I did the task myself in a private window, and nobody else was watched"), whether they had seen the site before, and the date.
+The version live after pull request #7 (24 November 2026). One person, chosen and watched by the
+builder, did the task on a phone. Reported to the project on 24 November 2026. Which phone and
+browser, and whether the person had seen the site before, were not written down.
 
 - I watched without helping, and wrote down what they did and said.
 
@@ -21,13 +23,16 @@ For each finding: what the person **did**, what I **think** it means, and what I
 
 | # | Behaviour (what you saw) | Interpretation (what you think it means) | Uncertainty (what you are not sure of) |
 | --- | --- | --- | --- |
-| 1 | TODO: | TODO: | TODO: |
-| 2 | TODO: | TODO: | TODO: |
+| 1 | The person found the price of a new battery and booked a time for Saturday without help; the builder saw no moment where they hesitated or went the wrong way. | The primary task works for a first-time user on a phone, from the home page to "Booking saved". | Only what the builder reported afterwards was recorded, not each step as it happened: a short hesitation may have been missed. One person is not enough to say that nobody will struggle. |
+| 2 | In the release check (not in the watched test), a keyboard user had to press Tab past 18 day buttons, one per Saturday, before reaching the times. | For someone who uses a keyboard or a switch instead of a mouse or a finger, the booking takes far longer than it needs to, and they may give up before the times. | Nobody who only uses a keyboard was watched; how much it bothers such a user is our estimate. |
 
 ## What we changed, and the retest
 
-TODO: the change made for finding 1, the pull request that made it (for example #8), and the retest:
-the same task again, with its date and result.
+Finding 1 asked for no change. Finding 2, from the release check, did: the row of days became ONE stop
+for Tab, and the left and right arrow keys (Home and End too) move to another day and open it (pull
+request #8). Retest on the live site on 24 November 2026, keyboard only: from the chosen day, one Tab
+reaches the first time of that day (before: 17); two presses of the right arrow opened Saturday 12
+December and its times.
 
 ## The release check
 
@@ -45,9 +50,8 @@ Date of the release check: 24 November 2026, on the version merged in pull reque
 | No example text left | `node scripts/ci/leftovers.mjs` | Passed on 24 November 2026: "Leftovers: none." |
 | Analytics records a page view | Network tab: `script.js` then `view` | Passed on 24 November 2026: both answered 200. |
 
-**One improvement, with its evidence:**
-
-TODO: the change from the test above, and what showed it worked.
+**One improvement, with its evidence:** the day row as one Tab stop with arrow keys (pull request #8).
+Evidence: in the release check, 17 Tabs stood between the first day and the times; in the retest, 1.
 
 ## Not tested yet
 
