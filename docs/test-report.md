@@ -33,17 +33,17 @@ the same task again, with its date and result.
 
 Done on the live site after the last pull request was merged.
 
-TODO: the date of the release check.
+Date of the release check: 24 November 2026, on the version merged in pull request #6.
 
 | Check | Conditions | Result |
 | --- | --- | --- |
-| Every page has one main heading, landmarks, alt texts and labelled fields | CI's browser checks (`checks/checks.json`) on the pull request's preview, at 1100 px and 390 px | TODO: |
-| Task 1 (book) works by keyboard only | Chrome on a laptop, only Tab, Space and Enter | TODO: |
-| Task 2 (find a repair) works by keyboard only | Chrome on a laptop, only Tab, Space and Enter | TODO: |
-| Both tasks work at phone width, without sideways scrolling | Chrome's device toolbar at 390 px wide, and on a real phone | TODO: |
-| The requirements' checks | `docs/requirements.md`, on the live site | TODO: |
+| Every page has one main heading, landmarks, alt texts and labelled fields | CI's browser checks (`checks/checks.json`) and axe on the pull request's preview, at 1100 px and 390 px | Passed on pull request #6 (after two fixes: the step numbers' contrast, and a swipe row without a keyboard stop). |
+| Task 1 (book) works by keyboard only | Chrome, only Tab, Enter, Space | Passed on 24 November 2026: day chosen with Enter, time with Space, the error message reached; 18 day buttons stand between the first day and the times. |
+| Task 2 (find a repair) works by keyboard only | Chrome, only Tab, arrows and Enter | Passed on 24 November 2026: 11 Tabs to "Your device", arrows to Laptop, Enter: "Repairs for your laptop: 4". |
+| Both tasks work at phone width, without sideways scrolling | Chrome at 390 × 844 px | Passed on 24 November 2026: every page 390 px wide; the day row and the device tiles swipe inside their own row. |
+| The requirements' checks | `docs/requirements.md`, on the live site, with two made-up bookings | Passed on 24 November 2026: R1 to R10. |
 | No example text left | `node scripts/ci/leftovers.mjs` | Passed on 24 November 2026: "Leftovers: none." |
-| Analytics records a page view | Network tab: `script.js` then `view` | TODO: |
+| Analytics records a page view | Network tab: `script.js` then `view` | Passed on 24 November 2026: both answered 200. |
 
 **One improvement, with its evidence:**
 

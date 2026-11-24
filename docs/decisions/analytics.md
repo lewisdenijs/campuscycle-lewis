@@ -25,7 +25,7 @@ Installed with the starter's two switches: `NEXT_PUBLIC_ANALYTICS=vercel` for Pr
 Checked on the live site in a browser without an ad blocker: the Network tab shows the analytics
 `script.js` and then a `view` request.
 
-TODO: the date it was switched on and checked.
+Switched on by the builder in Vercel, and checked on 24 November 2026: on the live home page the browser loaded `/3977c3e703b81499/script.js` and sent a `view` request, both answered 200.
 
 ## Why
 
