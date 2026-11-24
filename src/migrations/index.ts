@@ -7,6 +7,8 @@ import * as migration_20261004_222941_members_area from './20261004_222941_membe
 import * as migration_20261026_134541_what_to_bring from './20261026_134541_what_to_bring';
 import * as migration_20261123_100902_booking_repairs from './20261123_100902_booking_repairs';
 import * as migration_20261124_102301_remove_example from './20261124_102301_remove_example';
+import * as migration_20261124_103552_own_collections from './20261124_103552_own_collections';
+import * as migration_20261124_104154_fixpoint_content from './20261124_104154_fixpoint_content';
 
 export const migrations = [
   {
@@ -52,6 +54,16 @@ export const migrations = [
   {
     up: migration_20261124_102301_remove_example.up,
     down: migration_20261124_102301_remove_example.down,
-    name: '20261124_102301_remove_example'
+    name: '20261124_102301_remove_example',
+  },
+  {
+    up: migration_20261124_103552_own_collections.up,
+    down: migration_20261124_103552_own_collections.down,
+    name: '20261124_103552_own_collections',
+  },
+  {
+    up: migration_20261124_104154_fixpoint_content.up,
+    down: migration_20261124_104154_fixpoint_content.down,
+    name: '20261124_104154_fixpoint_content'
   },
 ];

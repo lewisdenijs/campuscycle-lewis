@@ -2,7 +2,7 @@
 // the page itself in <main>, and the footer. The admin (/admin) has its own frame in (payload).
 import { Analytics } from '@vercel/analytics/next'
 import type { Metadata } from 'next'
-import { Hanken_Grotesk } from 'next/font/google'
+import { Hanken_Grotesk, Space_Grotesk } from 'next/font/google'
 import type { ReactNode } from 'react'
 import { Footer } from '@/components/site/Footer'
 import { Header } from '@/components/site/Header'
@@ -17,17 +17,25 @@ const hanken = Hanken_Grotesk({
   variable: '--font-hanken-grotesk',
 })
 
+// Space Grotesk for headings (SIL Open Font Licence): Fixpoint's technical look (globals.css).
+const space = Space_Grotesk({
+  subsets: ['latin'],
+  display: 'swap',
+  weight: ['500', '700'],
+  variable: '--font-space-grotesk',
+})
+
 export const metadata: Metadata = {
   // The site's name on the home page's tab; every other page gives its own part, and the name is added
   // after it (src/content/campus-cycle.ts, SITE_TITLE).
   title: SITE_TITLE,
   description:
-    'Campus Cycle: bicycle maintenance workshops and a repair clinic at the college. A fictional example site for the course Building better websites.',
+    'Fixpoint: a repair café for phones, tablets, laptops and headphones at the college. A fictional site for the course Building better websites.',
 }
 
 export default function SiteLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className={hanken.variable}>
+    <html lang="en" className={`${hanken.variable} ${space.variable}`}>
       <body className="flex min-h-screen flex-col">
         <Header />
         {/* tabIndex -1: the skip link can move the keyboard's focus here in every browser. It is not a

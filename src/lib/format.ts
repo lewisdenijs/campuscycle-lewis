@@ -39,6 +39,24 @@ export function formatSlotTime(startsAt: string | Date): string {
   return `${day}, ${time}`
 }
 
+/**
+ * The parts of a slot's start the day-first picker needs, in Brussels time: a key per calendar day
+ * ("2026-11-28"), the day in short ("Sat", "28 Nov") and in full ("Saturday 28 November"), and the time
+ * ("13:00"). Same time zone rule as formatSlotTime.
+ */
+export function slotParts(startsAt: string | Date) {
+  const date = new Date(startsAt)
+  const part = (options: Intl.DateTimeFormatOptions, locale = 'en-GB') =>
+    new Intl.DateTimeFormat(locale, { timeZone: SITE_TIME_ZONE, ...options }).format(date)
+  return {
+    dayKey: part({ year: 'numeric', month: '2-digit', day: '2-digit' }, 'sv-SE'),
+    weekday: part({ weekday: 'short' }),
+    dayMonth: part({ day: 'numeric', month: 'short' }),
+    dayLong: part({ weekday: 'long', day: 'numeric', month: 'long' }),
+    time: part({ hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }),
+  }
+}
+
 /** How many places a time slot still has, in words: "2 places left", "1 place left" or "Full". */
 export function placesLabel(placesLeft: number): string {
   if (placesLeft <= 0) return 'Full'

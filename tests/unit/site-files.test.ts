@@ -83,7 +83,7 @@ describe('the markers a course exercise points at', () => {
   // W5 and W6 are about the clinic's price list and repairs: a copy without the repairs
   // (npm run remove-example) has neither, and these three stand aside (tests/setup/example.ts).
   it.runIf(EXAMPLE.repairs)('the clinic page keeps the W5 line where the summary is shown, and the price list above the booking form', () => {
-    const source = read('src/app/(site)/clinics/[slug]/page.tsx')
+    const source = read('src/app/(site)/repair-cafe/[slug]/page.tsx')
     const lines = source.split(/\r?\n/)
     // A learner adds their list on the line AFTER this comment; the comment and the summary stay.
     const keep = 'Keep the W5 comment and the summary above it; put your list on the line after the comment.'

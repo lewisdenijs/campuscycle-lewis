@@ -1,5 +1,5 @@
 // "My bookings", /account: the page of the optional members' area (src/lib/membersArea.ts) where a
-// logged-in member sees the repair clinic bookings they made while logged in, and can log out. While
+// logged-in member sees the repair café bookings they made while logged in, and can log out. While
 // the area is off it does not exist: it answers with the 404 page. Without a member's log-in it sends
 // the user to /account/login.
 //
@@ -68,7 +68,7 @@ export default async function AccountPage() {
         {rows.length === 0 ? (
           <Notice label="No bookings yet">
             <p>Bookings you make while logged in show up here.</p>
-            <ButtonLink href="/clinics" variant="secondary" className="mt-2 w-fit">Book a repair clinic slot</ButtonLink>
+            <ButtonLink href="/repair-cafe" variant="secondary" className="mt-2 w-fit">Book a repair café slot</ButtonLink>
           </Notice>
         ) : (
           <ul aria-label="Your bookings" className="grid gap-4">
@@ -84,7 +84,7 @@ export default async function AccountPage() {
                   </p>
                   {clinic && (
                     <p className="min-w-0 [overflow-wrap:anywhere]">
-                      <Link href={`/clinics/${clinic.slug}`}>{clinic.name}</Link>
+                      <Link href={`/repair-cafe/${clinic.slug}`}>{clinic.name}</Link>
                     </p>
                   )}
                 </li>

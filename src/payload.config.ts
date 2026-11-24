@@ -12,6 +12,10 @@ import { Pages } from './collections/Pages'
 import { Clinics } from './collections/Clinics'
 import { TimeSlots } from './collections/TimeSlots'
 import { Bookings } from './collections/Bookings'
+import { Devices } from './collections/Devices'
+import { Services } from './collections/Services'
+import { Fixers } from './collections/Fixers'
+import { Questions } from './collections/Questions'
 import { Throttle } from './collections/Throttle'
 import { Members } from './collections/Members'
 import { SiteFacts } from './globals/SiteFacts'
@@ -49,7 +53,7 @@ const config = buildConfig({
     },
   },
   // Members: the optional members' area, off unless MEMBERS_AREA=on (src/lib/membersArea.ts).
-  collections: [Users, Media, Pages, Clinics, TimeSlots, Bookings, Throttle, Members],
+  collections: [Users, Media, Pages, Devices, Services, Clinics, TimeSlots, Bookings, Fixers, Questions, Throttle, Members],
   globals: [SiteFacts],
   plugins: [vercelBlobStorage({
     enabled: Boolean(process.env.BLOB_READ_WRITE_TOKEN),

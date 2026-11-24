@@ -56,7 +56,7 @@ describe('saveBooking', () => {
   afterAll(() => resetCollections(clean))
 
   it('opens the signed confirmation page after a save', async () => {
-    expect(await digestOf(saveBooking(null, form()))).toMatch(/^NEXT_REDIRECT;replace;\/clinics\/test-clinic\/booked\?ref=\d+\.[0-9a-f]{32};307;/)
+    expect(await digestOf(saveBooking(null, form()))).toMatch(/^NEXT_REDIRECT;replace;\/repair-cafe\/test-clinic\/booked\?ref=\d+\.[0-9a-f]{32};307;/)
     expect(revalidated).toEqual([])
   })
 
@@ -64,7 +64,7 @@ describe('saveBooking', () => {
     await digestOf(saveBooking(null, form()))
     const result = await saveBooking(null, form({ name: 'Second Person' }))
     expect(result).toMatchObject({ ok: false, message: 'This slot is full. Choose another time.', values: { timeSlot: '', name: 'Second Person' } })
-    expect(revalidated).toEqual(['/clinics/test-clinic'])
+    expect(revalidated).toEqual(['/repair-cafe/test-clinic'])
   })
 
   it('a problem with another field, or "choose a time", reads nothing again', async () => {
@@ -78,7 +78,7 @@ describe('saveBooking', () => {
     const started = await p.create({ collection: 'timeSlots', data: { clinic: clinic.id, startsAt: new Date(Date.now() - 60 * 1000).toISOString(), places: 2 } })
     const result = await saveBooking(null, form({ timeSlot: String(started.id) }))
     expect(result).toMatchObject({ ok: false, field: 'timeSlot', errors: { timeSlot: 'This time has already started. Choose a later time.' } })
-    expect(revalidated).toEqual(['/clinics/test-clinic'])
+    expect(revalidated).toEqual(['/repair-cafe/test-clinic'])
   })
 
   it('a "full" answer for a form that names a clinic which does not exist reads nothing again', async () => {
@@ -89,7 +89,7 @@ describe('saveBooking', () => {
       expect(revalidated).toEqual([])
       // The same answer for a real clinic does read its page again.
       await saveBooking(null, form())
-      expect(revalidated).toEqual(['/clinics/test-clinic'])
+      expect(revalidated).toEqual(['/repair-cafe/test-clinic'])
     } finally {
       answer.result = undefined
     }

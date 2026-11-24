@@ -30,6 +30,7 @@ import { MADE_UP_DATA_NOTICE } from '@/content/campus-cycle'
 import type { BookingField, BookingResult, BookingValues } from '@/tasks/book-slot/createBooking'
 import { saveBooking } from '@/tasks/book-slot/saveBooking'
 import { typedValues } from '@/tasks/book-slot/typedValues'
+import { priceInWords } from '@/lib/repairs'
 
 type BookingFormProps = {
   // The clinic's slug: the server checks that the chosen time belongs to this clinic.
@@ -41,6 +42,8 @@ type BookingFormProps = {
   // name ('' when their account has none) and their e-mail address, and nothing else. null when the
   // area is off or nobody is logged in, and then the form is the ordinary one.
   member?: { name: string; email: string } | null
+  // The repairs the user can tick (what needs fixing), each with its own price from its record.
+  repairs?: { id: number; name: string; price: number }[]
 }
 
 const EMPTY: BookingValues = { timeSlot: '', name: '', email: '', note: '' }
@@ -70,6 +73,25 @@ async function sendBooking(previous: BookingResult | null, formData: FormData): 
     console.error('The booking request got no answer:', error)
     return { ok: false, lost: true, message: 'The server could not be reached.', values: typedValues(formData) }
   }
+}
+
+// What needs fixing: one checkbox per repair, with its price. Optional: a user who is not sure ticks
+// nothing and explains in the note. The ticked boxes stay ticked when the form comes back with an error.
+function RepairChoice({ repairs }: { repairs: NonNullable<BookingFormProps['repairs']> }) {
+  const sent = useSentValues()
+  return (
+    <fieldset className="grid gap-3">
+      <legend className="mb-1 font-semibold">
+        What needs fixing? <span className="font-normal text-ink-soft">(optional)</span>
+      </legend>
+      {repairs.map((repair) => (
+        <label key={repair.id} className="flex min-h-11 items-center gap-3">
+          <input type="checkbox" name="repairs" value={repair.id} defaultChecked={sent.repairs?.includes(String(repair.id))} className="size-5 accent-ink" />
+          {repair.name}, {priceInWords(repair.price)}
+        </label>
+      ))}
+    </fieldset>
+  )
 }
 
 export function BookingForm(props: BookingFormProps) {
@@ -141,7 +163,7 @@ export function BookingForm(props: BookingFormProps) {
           <Label htmlFor="note">
             Note <span className="font-normal text-ink-soft">(optional)</span>
           </Label>
-          <p id="note-hint" className="text-ink-soft">For example, what is wrong with your bicycle. At most 500 characters.</p>
+          <p id="note-hint" className="text-ink-soft">For example, what is wrong with your device. At most 500 characters.</p>
           <Textarea
             id="note"
             name="note"
@@ -152,6 +174,8 @@ export function BookingForm(props: BookingFormProps) {
           />
           {errors.note && <FieldError id="note-error">{errors.note}</FieldError>}
         </div>
+
+        {props.repairs && props.repairs.length > 0 && <RepairChoice repairs={props.repairs} />}
 
         {/* The trap field: name="extra" is TRAP_FIELD in src/tasks/book-slot/guards.ts (keep the two the
             same). People never see it, a screen reader skips it (aria-hidden) and Tab never reaches it

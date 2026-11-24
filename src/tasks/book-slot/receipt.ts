@@ -1,4 +1,4 @@
-// The confirmation link after a booking: /clinics/<slug>/booked?ref=<booking id>.<signature>.
+// The confirmation link after a booking: /repair-cafe/<slug>/booked?ref=<booking id>.<signature>.
 //
 // WHY a signature: the confirmation page reads the booking to show its clinic and time. If the link
 // held only the booking's number, anyone could type other numbers and learn when other people booked.

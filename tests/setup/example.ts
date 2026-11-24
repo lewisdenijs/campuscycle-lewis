@@ -44,7 +44,7 @@ export const EXAMPLE = {
   // The clinic's price list, and W6's repair choice.
   repairs: hasCollection('repairs'),
   // The repair clinic and its booking task (example task 2).
-  clinic: hasCollection('clinics') && hasCollection('timeSlots') && hasCollection('bookings') && hasPage('/clinics/[slug]'),
+  clinic: hasCollection('clinics') && hasCollection('timeSlots') && hasCollection('bookings') && hasPage('/repair-cafe/[slug]'),
   // Still the Campus Cycle site, not renamed yet: the tests that compare the seed with the course's
   // Campus Cycle fact sheet run only then (a renamed site has facts of its own).
   campusCycle: (SITE_NAME as string) === 'Campus Cycle',

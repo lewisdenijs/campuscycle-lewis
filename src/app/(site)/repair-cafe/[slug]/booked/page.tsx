@@ -1,4 +1,4 @@
-// The booking confirmation, /clinics/<slug>/booked?ref=<booking id>.<signature>. The booking form
+// The booking confirmation, /repair-cafe/<slug>/booked?ref=<booking id>.<signature>. The booking form
 // opens it after a booking was saved. It says only what really happened: it shows the clinic and the
 // time of the booking named in the link, and only when the link's signature is right
 // (src/tasks/book-slot/receipt.ts). A link that is missing, changed or made up never claims a booking.
@@ -40,11 +40,14 @@ export default async function BookedPage({ params, searchParams }: Props) {
   const id = bookingIdFromRef((await searchParams).ref)
   const booking = id === null
     ? null
-    : await payload.findByID({ collection: 'bookings', id, depth: 0, select: { timeSlot: true, member: true }, overrideAccess: true, disableErrors: true })
+    : await payload.findByID({ collection: 'bookings', id, depth: 0, select: { timeSlot: true, member: true, repairs: true }, overrideAccess: true, disableErrors: true })
   const slotId = typeof booking?.timeSlot === 'number' ? booking.timeSlot : null
   const slot = slotId === null ? null : await payload.findByID({ collection: 'timeSlots', id: slotId, depth: 0, joins: false, disableErrors: true })
   // The booking must also be for THIS clinic: a link to another clinic's booking shows nothing.
   const confirmed = slot !== null && slot.clinic === clinic.id
+  // The repairs the user ticked, by name (public records): what the volunteers will have ready.
+  const repairIds = (booking?.repairs ?? []).map((repair) => (typeof repair === 'number' ? repair : repair.id))
+  const repairs = repairIds.length === 0 ? [] : (await payload.find({ collection: 'services', where: { id: { in: repairIds } }, depth: 0, limit: 100 })).docs
 
   if (!confirmed) {
     return (
@@ -52,8 +55,8 @@ export default async function BookedPage({ params, searchParams }: Props) {
         <PageTitle title="Booking confirmation" tone="yellow" />
         <Notice tone="warning" label="Please note" className="max-w-3xl">
           <p className="font-heading text-xl font-extrabold">We can&apos;t show this booking confirmation.</p>
-          <p>The link may be incomplete or out of date. The clinic&apos;s page shows its times and how many places each one has left.</p>
-          <ButtonLink href={`/clinics/${clinic.slug}`} variant="secondary" className="mt-2 w-fit">Back to the clinic</ButtonLink>
+          <p>The link may be incomplete or out of date. The repair café&apos;s page shows its times and how many places each one has left.</p>
+          <ButtonLink href={`/repair-cafe/${clinic.slug}`} variant="secondary" className="mt-2 w-fit">Back to the repair café</ButtonLink>
         </Notice>
       </div>
     )
@@ -91,10 +94,16 @@ export default async function BookedPage({ params, searchParams }: Props) {
         <section aria-labelledby="booking" className="framed grid gap-4 p-6 offset-mint">
           <h2 id="booking" className="text-xl">Your booking</h2>
           <dl className="grid grid-cols-[auto_minmax(0,1fr)] gap-x-4 gap-y-2">
-            <dt className="text-ink-soft">Clinic</dt>
+            <dt className="text-ink-soft">Repair café</dt>
             <dd className="min-w-0 font-semibold [overflow-wrap:anywhere]">{clinic.name}</dd>
             <dt className="text-ink-soft">Time</dt>
             <dd className="font-semibold">{formatSlotTime(slot.startsAt)}</dd>
+            {repairs.length > 0 && (
+              <>
+                <dt className="text-ink-soft">Repairs</dt>
+                <dd className="font-semibold">{repairs.map((repair) => repair.name).join(', ')}</dd>
+              </>
+            )}
             {facts.place && (
               <>
                 <dt className="text-ink-soft">Place</dt>
@@ -104,7 +113,7 @@ export default async function BookedPage({ params, searchParams }: Props) {
           </dl>
         </section>
         <div className="flex flex-wrap gap-3">
-          <ButtonLink href={`/clinics/${clinic.slug}`} variant="secondary">Back to the clinic</ButtonLink>
+          <ButtonLink href={`/repair-cafe/${clinic.slug}`} variant="secondary">Back to the repair café</ButtonLink>
           <ButtonLink href="/" variant="quiet">Home</ButtonLink>
         </div>
       </div>

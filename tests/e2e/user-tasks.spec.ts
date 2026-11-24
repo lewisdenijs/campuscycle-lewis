@@ -54,9 +54,9 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
   // Opens the test clinic from the clinic list, as a user would.
   async function openClinic(page: Page) {
     const { clinic } = readFixture()
-    await page.goto('/clinics')
+    await page.goto('/repair-cafe')
     await page.getByRole('main').getByRole('link', { name: clinic.name }).first().click()
-    await expect(page).toHaveURL(new RegExp(`/clinics/${clinic.slug}$`))
+    await expect(page).toHaveURL(new RegExp(`/repair-cafe/${clinic.slug}$`))
     await expect(page.getByRole('heading', { level: 1, name: clinic.name })).toBeVisible()
   }
 
@@ -74,7 +74,7 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
     await fillIn(page)
     await page.getByRole('button', { name: 'Book this slot' }).click()
 
-    await expect(page).toHaveURL(/\/clinics\/e2e-check-clinic\/booked\?ref=\d+\.[0-9a-f]{32}$/)
+    await expect(page).toHaveURL(/\/repair-cafe\/e2e-check-clinic\/booked\?ref=\d+\.[0-9a-f]{32}$/)
     await expect(page.getByRole('heading', { level: 1, name: 'Booking saved' })).toBeVisible()
     await expect(page.getByRole('status').filter({ hasText: 'Your booking is saved.' })).toContainText(BOOKING_CONFIRMATION)
     await expect(page.getByText(BOOKING_CONFIRMATION, { exact: true })).toBeVisible()
@@ -97,7 +97,7 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
     await expect(page.getByLabel('Your name')).toHaveValue('Test Person')
     await expect(page.getByLabel('Your e-mail address')).toHaveValue('not-an-address')
     await expect(page.getByLabel('Note')).toHaveValue('The back brake squeaks.')
-    await expect(page).toHaveURL(/\/clinics\/e2e-check-clinic$/)
+    await expect(page).toHaveURL(/\/repair-cafe\/e2e-check-clinic$/)
   })
 
   test('the connection drops before the booking reaches the server: "Not confirmed", everything kept; sending again books once', async ({ page, request }) => {
@@ -108,7 +108,7 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
 
     // The booking form's send is a POST to the clinic page's own address: make it fail as a dropped
     // connection would.
-    await page.route('**/clinics/e2e-check-clinic', (route) => (route.request().method() === 'POST' ? route.abort('internetdisconnected') : route.fallback()))
+    await page.route('**/repair-cafe/e2e-check-clinic', (route) => (route.request().method() === 'POST' ? route.abort('internetdisconnected') : route.fallback()))
     await page.getByRole('button', { name: 'Book this slot' }).click()
 
     const box = page.getByRole('alert').filter({ hasText: 'Not confirmed' })
@@ -123,7 +123,7 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
     expect(await countBookings(request, requestId)).toBe(0)
 
     // The connection is back: the same press books it, once.
-    await page.unroute('**/clinics/e2e-check-clinic')
+    await page.unroute('**/repair-cafe/e2e-check-clinic')
     await page.getByRole('button', { name: 'Book this slot' }).click()
     await expect(page).toHaveURL(/\/booked\?ref=/)
     await expect(page.getByText(BOOKING_CONFIRMATION, { exact: true })).toBeVisible()
@@ -136,7 +136,7 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
     const requestId = await requestIdOf(page)
 
     // The request reaches the server, which saves the booking; its answer never reaches the browser.
-    await page.route('**/clinics/e2e-check-clinic', async (route) => {
+    await page.route('**/repair-cafe/e2e-check-clinic', async (route) => {
       if (route.request().method() !== 'POST') return route.fallback()
       await route.fetch()
       await route.abort('connectionreset')
@@ -146,7 +146,7 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
     expect(await countBookings(request, requestId)).toBe(1)
     expect(await requestIdOf(page)).toBe(requestId)
 
-    await page.unroute('**/clinics/e2e-check-clinic')
+    await page.unroute('**/repair-cafe/e2e-check-clinic')
     await page.getByRole('button', { name: 'Book this slot' }).click()
     await expect(page).toHaveURL(/\/booked\?ref=/)
     await expect(page.getByText(BOOKING_CONFIRMATION, { exact: true })).toBeVisible()
@@ -158,16 +158,16 @@ test.describe('task 2: book a time slot at the repair clinic', () => {
     // The clinics table is renamed for a moment (fixture.ts break): every read of a clinic fails.
     runFixture('break')
     try {
-      const response = await page.goto(`/clinics/${clinic.slug}`)
+      const response = await page.goto(`/repair-cafe/${clinic.slug}`)
       expect(response?.status()).toBe(500)
       await expect(page.getByRole('heading', { level: 1, name: 'This page could not be shown' })).toBeVisible()
-      await expect(page.getByRole('link', { name: 'All repair clinics' })).toBeVisible()
+      await expect(page.getByRole('link', { name: 'All repair café days' })).toBeVisible()
     } finally {
       runFixture('mend')
     }
     // "Try again" asks the server again (Next.js's retry), so the page now works without a reload.
     await page.getByRole('button', { name: 'Try again' }).click()
     await expect(page.getByRole('heading', { level: 1, name: clinic.name })).toBeVisible()
-    await expect(page).toHaveURL(new RegExp(`/clinics/${clinic.slug}$`))
+    await expect(page).toHaveURL(new RegExp(`/repair-cafe/${clinic.slug}$`))
   })
 })

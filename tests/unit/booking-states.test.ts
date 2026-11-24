@@ -4,7 +4,7 @@ import { createElement, isValidElement, type ReactNode } from 'react'
 import { renderToString } from 'react-dom/server'
 import { describe, expect, it, vi } from 'vitest'
 import { BookingProblem } from '../../src/components/site/BookingProblem'
-import ClinicError from '../../src/app/(site)/clinics/[slug]/error'
+import ClinicError from '../../src/app/(site)/repair-cafe/[slug]/error'
 
 const FULL = 'This slot is full. Choose another time.'
 const values = { timeSlot: '', name: 'Test Person', email: 'test@campuscycle.example', note: '' }
@@ -52,13 +52,13 @@ describe("the clinic pages' last safety net (error.tsx)", () => {
     return props.onClick ?? findClick(props.children)
   }
 
-  it('says what happened in plain words, offers Try again and a way to all repair clinics', () => {
+  it('says what happened in plain words, offers Try again and a way to all repair café days', () => {
     const page = ClinicError({ error: new Error('secret detail'), retry: () => undefined })
     const html = text(renderToString(page))
     expect(html).toMatch(/<h1[^>]*>This page could not be shown<\/h1>/)
-    expect(html).toContain('Something went wrong while showing this page. Try again, or go back to all repair clinics.')
+    expect(html).toContain('Something went wrong while showing this page. Try again, or go back to all repair café days.')
     expect(html).toMatch(/<button[^>]*>Try again<\/button>/)
-    expect(html).toMatch(/<a[^>]*href="\/clinics"[^>]*>All repair clinics<\/a>/)
+    expect(html).toMatch(/<a[^>]*href="\/repair-cafe"[^>]*>All repair café days<\/a>/)
     expect(html).not.toContain('secret detail')
   })
 

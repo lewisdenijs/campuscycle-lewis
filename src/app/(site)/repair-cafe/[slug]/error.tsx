@@ -1,6 +1,6 @@
 'use client'
 
-// The last safety net for a clinic's pages (/clinics/<slug> and its confirmation): Next.js shows this
+// The last safety net for a clinic's pages (/repair-cafe/<slug> and its confirmation): Next.js shows this
 // instead of the page when something unexpected goes wrong while the page is made, for example when
 // the database cannot be reached. It must run in the browser ('use client'), because its button works
 // there.
@@ -24,12 +24,12 @@ export default function ClinicError({ retry }: ErrorPageProps) {
     <div className="pb-6">
       <PageTitle
         title="This page could not be shown"
-        intro="Something went wrong while showing this page. Try again, or go back to all repair clinics."
+        intro="Something went wrong while showing this page. Try again, or go back to all repair café days."
         tone="yellow"
       />
       <div className="flex flex-wrap gap-3">
         <Button type="button" onClick={() => retry()}>Try again</Button>
-        <ButtonLink href="/clinics" variant="secondary">All repair clinics</ButtonLink>
+        <ButtonLink href="/repair-cafe" variant="secondary">All repair café days</ButtonLink>
       </div>
     </div>
   )

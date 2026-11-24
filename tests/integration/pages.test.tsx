@@ -24,7 +24,7 @@ import HomePage from '../../src/app/(site)/page'
 import PlainPage, { generateMetadata } from '../../src/app/(site)/[slug]/page'
 import DeeperAddress from '../../src/app/(site)/[slug]/[...rest]/page'
 import ContactPage, { generateMetadata as contactMetadata } from '../../src/app/(site)/contact/page'
-import ClinicsPage from '../../src/app/(site)/clinics/page'
+import ClinicsPage from '../../src/app/(site)/repair-cafe/page'
 import NotFound from '../../src/app/(site)/not-found'
 import { Header } from '../../src/components/site/Header'
 import { Footer } from '../../src/components/site/Footer'
@@ -76,9 +76,10 @@ describe('the public pages', () => {
 
   it("home: the home page record's title, and \"opens soon\" while there is no clinic", async () => {
     const page = html(await HomePage())
-    expect(page).toContain(seeded('home').title)
-    expect(page).toContain('The repair clinic opens soon')
-    expect(page).not.toContain('href="/clinics/')
+    // The title's last word sits in its own <span> (the orange marker), so compare the text without tags.
+    expect(page.replace(/<[^>]+>/g, '')).toContain(seeded('home').title)
+    expect(page).toContain('The repair café opens soon')
+    expect(page).not.toContain('href="/repair-cafe/')
     // The pricing rule comes from the Site facts global.
     expect(page).toContain(CAMPUS_CYCLE.pricingRule)
   })
@@ -154,11 +155,11 @@ describe('the public pages', () => {
     })
     try {
       const page = html(await HomePage())
-      expect(page).toContain('href="/clinics/saturday-repair-clinic"')
-      expect(page).not.toContain('href="/clinics/spring-repair-clinic"')
-      expect(page).not.toContain('The repair clinic opens soon')
+      expect(page).toContain('href="/repair-cafe/saturday-repair-clinic"')
+      expect(page).not.toContain('href="/repair-cafe/spring-repair-clinic"')
+      expect(page).not.toContain('The repair café opens soon')
       const list = html(await ClinicsPage())
-      expect(list).toContain('href="/clinics/saturday-repair-clinic"')
+      expect(list).toContain('href="/repair-cafe/saturday-repair-clinic"')
       expect(list).toContain('Saturday repair clinic')
     } finally {
       await p.delete({ collection: 'clinics', id: clinic.id })
@@ -166,9 +167,9 @@ describe('the public pages', () => {
     }
   })
 
-  it('/clinics: the truthful empty state while there is no clinic', async () => {
+  it('/repair-cafe: the truthful empty state while there is no clinic', async () => {
     const list = html(await ClinicsPage())
-    expect(list).toContain('The repair clinic opens soon')
+    expect(list).toContain('The repair café opens soon')
   })
 
   it('/about shows the about page record, with a title for the browser tab', async () => {
@@ -240,10 +241,10 @@ describe('the public pages', () => {
     expect(header).toContain('aria-label="Main"')
     expect(header).toMatch(/<a[^>]*aria-current="page"[^>]*href="\/about"|<a[^>]*href="\/about"[^>]*aria-current="page"/)
     expect(header.match(/aria-current=/g)).toHaveLength(1)
-    // The repair clinic's own pages count as being in the "Repair clinic" part of the site.
-    where.pathname = '/clinics/saturday-repair-clinic'
+    // The repair clinic's own pages count as being in the "Repair café" part of the site.
+    where.pathname = '/repair-cafe/saturday-repair-clinic'
     const inClinic = html(await Header())
-    expect(inClinic).toMatch(/<a[^>]*href="\/clinics"[^>]*aria-current="true"|<a[^>]*aria-current="true"[^>]*href="\/clinics"/)
+    expect(inClinic).toMatch(/<a[^>]*href="\/repair-cafe"[^>]*aria-current="true"|<a[^>]*aria-current="true"[^>]*href="\/repair-cafe"/)
     expect(html(await Header())).toContain('Skip to main content')
   })
 })

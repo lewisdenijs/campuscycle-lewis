@@ -33,12 +33,12 @@ export async function saveBooking(_previous: BookingResult | null, formData: For
     const slotChanged =
       result.message === FULL_MESSAGE || result.message === SLOT_GONE_MESSAGE || result.errors?.timeSlot === STARTED_MESSAGE
     if (slotChanged && (await payload.count({ collection: 'clinics', where: { slug: { equals: clinic } } })).totalDocs > 0) {
-      revalidatePath(`/clinics/${encodeURIComponent(clinic)}`)
+      revalidatePath(`/repair-cafe/${encodeURIComponent(clinic)}`)
     }
     return result
   }
 
   // Saved. The confirmation page's address carries the booking's number with a signature
   // (receipt.ts), so the page can show this booking, and only this one.
-  redirect(`/clinics/${encodeURIComponent(clinic)}/booked?ref=${bookingRef(result.bookingId)}`)
+  redirect(`/repair-cafe/${encodeURIComponent(clinic)}/booked?ref=${bookingRef(result.bookingId)}`)
 }

@@ -15,5 +15,5 @@ type ButtonLinkProps = ComponentProps<typeof Link> & {
 }
 
 export function ButtonLink({ variant = 'primary', size = 'default', className, ...props }: ButtonLinkProps) {
-  return <Link className={cn(buttonVariants({ variant, size }), className)} {...props} />
+  return <Link data-variant={variant} className={cn(buttonVariants({ variant, size }), className)} {...props} />
 }

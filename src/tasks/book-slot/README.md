@@ -11,7 +11,7 @@ protect them:
 
 | File | What it does |
 |---|---|
-| `src/app/(site)/clinics/[slug]/page.tsx` | The clinic's page: the clinic, and the booking form with the time slots that have not started yet and their places left |
+| `src/app/(site)/repair-cafe/[slug]/page.tsx` | The clinic's page: the clinic, and the booking form with the time slots that have not started yet and their places left |
 | `src/components/site/BookingForm.tsx` | The form and its fields |
 | `src/components/site/BookingSubmitButton.tsx`, `src/components/site/BookingProblem.tsx` | The form's button ("Saving your booking…" while it is sent), and the box that says what went wrong when it was not saved |
 | `src/tasks/book-slot/typedValues.ts` | What the user typed, read from the form when no answer came back, so nothing is lost |
@@ -22,8 +22,8 @@ protect them:
 | `src/tasks/book-slot/places.ts` | The places rule's one setting: which collection has places, and in which field |
 | `src/tasks/book-slot/guards.ts` | The spam guards: the hidden trap field and the rate limit. **You do not need to change this file** |
 | `src/tasks/book-slot/receipt.ts` | The signed confirmation link, so the confirmation shows this booking and only this one |
-| `src/app/(site)/clinics/[slug]/booked/page.tsx` | The confirmation page |
-| `src/app/(site)/clinics/[slug]/error.tsx` | The last safety net: "This page could not be shown", with Try again |
+| `src/app/(site)/repair-cafe/[slug]/booked/page.tsx` | The confirmation page |
+| `src/app/(site)/repair-cafe/[slug]/error.tsx` | The last safety net: "This page could not be shown", with Try again |
 | `tests/integration/booking.test.ts`, `booking-race.test.ts`, `tests/unit/book-slot.test.ts` | The tests |
 
 ## What happens when a user presses "Book this slot"

@@ -50,7 +50,7 @@ export const price: Field = {
   min: 0,
 }
 
-// Places and group sizes count people or bicycles, so 1.5 or 0 makes no sense.
+// Places and group sizes count people or devices, so 1.5 or 0 makes no sense.
 export const positiveInteger: NumberFieldSingleValidation = (value) => {
   if (Number.isInteger(value) && Number(value) > 0) {
     return true

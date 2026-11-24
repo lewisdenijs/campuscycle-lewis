@@ -17,7 +17,7 @@ export default function NotFound() {
       />
       <div className="flex flex-wrap gap-3 px-6 sm:px-10 lg:px-14">
         <ButtonLink href="/">Go to the home page</ButtonLink>
-        <ButtonLink href="/clinics" variant="secondary">See the repair clinic</ButtonLink>
+        <ButtonLink href="/repair-cafe" variant="secondary">See the repair café</ButtonLink>
       </div>
     </div>
   )

@@ -40,8 +40,8 @@ vi.mock('next/navigation', async (importOriginal) => ({
   usePathname: () => '/',
 }))
 
-import ClinicPage from '../../src/app/(site)/clinics/[slug]/page'
-import BookedPage from '../../src/app/(site)/clinics/[slug]/booked/page'
+import ClinicPage from '../../src/app/(site)/repair-cafe/[slug]/page'
+import BookedPage from '../../src/app/(site)/repair-cafe/[slug]/booked/page'
 import AccountPage from '../../src/app/(site)/account/page'
 import LoginPage from '../../src/app/(site)/account/login/page'
 import { signIn, signOut } from '../../src/app/(site)/account/actions'

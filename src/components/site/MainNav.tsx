@@ -17,7 +17,8 @@ import { cn } from '@/lib/utils'
 
 const LINKS = [
   { href: '/', label: 'Home' },
-  { href: '/clinics', label: 'Repair clinic' },
+  { href: '/repairs', label: 'Repairs' },
+  { href: '/repair-cafe', label: 'Repair café' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
 ]
@@ -26,7 +27,7 @@ const ACCOUNT_LINK = { href: '/account', label: 'My bookings' }
 const LOGIN_LINK = { href: '/account/login', label: 'Log in' }
 
 // "page": this exact page is open. "true": a page inside this part of the site is open, for example
-// one clinic's page under Repair clinic.
+// one clinic's page under Repair café.
 function currentFor(href: string, pathname: string): 'page' | 'true' | undefined {
   if (pathname === href) return 'page'
   if (href === '/') return undefined
@@ -38,8 +39,9 @@ export function MainNav({ account = false, loggedIn = false }: { account?: boole
   const pathname = usePathname() ?? ''
   const links = account ? [...LINKS, loggedIn ? ACCOUNT_LINK : LOGIN_LINK] : LINKS
   return (
-    <nav aria-label="Main">
-      <ul className="flex flex-wrap gap-x-1 gap-y-2">
+    <nav aria-label="Main" className="-mx-2 w-[calc(100%+1rem)] overflow-x-auto sm:mx-0 sm:w-auto sm:overflow-visible">
+      {/* On a phone: one line that swipes sideways (padding keeps the offset and focus ring visible). */}
+      <ul className="flex flex-nowrap gap-x-0.5 px-2 py-2 sm:flex-wrap sm:gap-x-1 sm:gap-y-2 sm:p-0">
         {links.map(({ href, label }) => {
           const current = currentFor(href, pathname)
           return (
@@ -49,7 +51,10 @@ export function MainNav({ account = false, loggedIn = false }: { account?: boole
                 aria-current={current}
                 className={cn(
                   // The focus ring sits further out than elsewhere, so it clears the open page's offset frame.
-                  'flex min-h-11 items-center rounded-control px-3 font-semibold text-ink no-underline focus-visible:outline-offset-6',
+                  // On a phone the logo is the way home, so the Home link only shows from sm up: the menu
+                  // then fits one line.
+                  href === '/' && 'max-sm:hidden',
+                  'flex min-h-11 items-center rounded-control px-2 text-[0.95rem] font-semibold whitespace-nowrap sm:px-3 sm:text-base text-ink no-underline focus-visible:outline-offset-6',
                   current
                     ? 'framed rounded-control font-bold [--offset-size:4px]'
                     : 'border-2 border-transparent hover:bg-blue-tint',
