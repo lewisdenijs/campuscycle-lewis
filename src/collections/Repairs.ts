@@ -21,6 +21,5 @@ export const Repairs: CollectionConfig = {
       type: 'textarea',
     },
     // Add new repair fields here.
-    { name: 'bookings', type: 'join', collection: 'bookings', on: 'repairs' },
   ],
 }

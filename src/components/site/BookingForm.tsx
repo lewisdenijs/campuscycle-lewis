@@ -31,7 +31,6 @@ import type { Repair } from '@/payload-types'
 import type { BookingField, BookingResult, BookingValues } from '@/tasks/book-slot/createBooking'
 import { saveBooking } from '@/tasks/book-slot/saveBooking'
 import { typedValues } from '@/tasks/book-slot/typedValues'
-import { formatPrice } from '@/lib/format'
 
 type BookingFormProps = {
   // The clinic's slug: the server checks that the chosen time belongs to this clinic.
@@ -58,10 +57,10 @@ export function useSentValues(): BookingValues {
 }
 
 /**
-- Sends the form to the server (saveBooking). When the server cannot be reached at all (the
-- connection dropped, or the answer got lost), the call fails: instead of an error page, the form
-- then gets a "lost" answer and keeps everything the user typed, and the same requestId. If the
-- booking was in fact saved, sending it again returns that same booking (createBooking.ts, step 3).
+ * Sends the form to the server (saveBooking). When the server cannot be reached at all (the
+ * connection dropped, or the answer got lost), the call fails: instead of an error page, the form
+ * then gets a "lost" answer and keeps everything the user typed, and the same requestId. If the
+ * booking was in fact saved, sending it again returns that same booking (createBooking.ts, step 3).
  */
 async function sendBooking(previous: BookingResult | null, formData: FormData): Promise<BookingResult> {
   try {
@@ -80,31 +79,31 @@ async function sendBooking(previous: BookingResult | null, formData: FormData): 
 // Then replace the whole line {/* W6: <RepairChoice repairs={props.repairs} /> */} in the form below
 // with <RepairChoice repairs={props.repairs} />. The server side is the two lines the W6 comment in
 // createBooking.ts names (src/tasks/book-slot/createBooking.ts).
-function RepairChoice({ repairs }: { repairs: BookingFormProps['repairs'] }) {
-  // The repairs ticked in the last send, so they stay ticked when the form comes back.
-  const sent = useSentValues()
-  return (
-    <fieldset className="grid gap-3">
-      <legend className="mb-1 font-semibold">
-        Repairs <span className="font-normal text-ink-soft">(optional)</span>
-      </legend>
-      {repairs.map((repair) => {
-        // To show each repair's price too, replace the line under this comment with this line:
-        //   const label = repair.name + ', ' + formatPrice(repair.price)
-        // and add this line at the top of the file, under the other import lines:
-        //   import { formatPrice } from '@/lib/format'
-        // It reads each repair's own price, from the same record as the price list: nothing is copied.
-        const label = repair.name + ', ' + formatPrice(repair.price)
-        return (
-          <label key={repair.id} className="flex min-h-11 items-center gap-3">
-            <input type="checkbox" name="repairs" value={repair.id} defaultChecked={sent.repairs?.includes(String(repair.id))} className="size-5 accent-ink" />
-            {label}
-          </label>
-        )
-      })}
-    </fieldset>
-  )
-}
+// function RepairChoice({ repairs }: { repairs: BookingFormProps['repairs'] }) {
+//   // The repairs ticked in the last send, so they stay ticked when the form comes back.
+//   const sent = useSentValues()
+//   return (
+//     <fieldset className="grid gap-3">
+//       <legend className="mb-1 font-semibold">
+//         Repairs <span className="font-normal text-ink-soft">(optional)</span>
+//       </legend>
+//       {repairs.map((repair) => {
+//         // To show each repair's price too, replace the line under this comment with this line:
+//         //   const label = repair.name + ', ' + formatPrice(repair.price)
+//         // and add this line at the top of the file, under the other import lines:
+//         //   import { formatPrice } from '@/lib/format'
+//         // It reads each repair's own price, from the same record as the price list: nothing is copied.
+//         const label = repair.name
+//         return (
+//           <label key={repair.id} className="flex min-h-11 items-center gap-3">
+//             <input type="checkbox" name="repairs" value={repair.id} defaultChecked={sent.repairs?.includes(String(repair.id))} className="size-5 accent-ink" />
+//             {label}
+//           </label>
+//         )
+//       })}
+//     </fieldset>
+//   )
+// }
 
 export function BookingForm(props: BookingFormProps) {
   const { clinic, slots, requestId, member } = props
@@ -187,7 +186,7 @@ export function BookingForm(props: BookingFormProps) {
           {errors.note && <FieldError id="note-error">{errors.note}</FieldError>}
         </div>
 
-        <RepairChoice repairs={props.repairs} />
+        {/* W6: <RepairChoice repairs={props.repairs} /> */}
 
         {/* The trap field: name="extra" is TRAP_FIELD in src/tasks/book-slot/guards.ts (keep the two the
             same). People never see it, a screen reader skips it (aria-hidden) and Tab never reaches it
@@ -208,4 +207,3 @@ export function BookingForm(props: BookingFormProps) {
     </form>
   )
 }
-
